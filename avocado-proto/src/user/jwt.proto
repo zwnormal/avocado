@@ -1,0 +1,27 @@
+syntax = "proto3";
+package jwt;
+
+service Jwt {
+  rpc Verify(VerifyRequest) returns (VerifyReply);
+  rpc Refresh(RefreshRequest) returns (RefreshReply);
+}
+
+message VerifyRequest {
+  string token = 1;
+}
+
+message VerifyReply {
+  string sub = 1;
+  int64 exp = 2;
+  int64 iat = 3;
+  int64 nbf = 4;
+}
+
+message RefreshRequest {
+  string refresh_token = 1;
+}
+
+message RefreshReply {
+  string access_token = 1;
+  string refresh_token = 2;
+}

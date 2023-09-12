@@ -1,0 +1,2 @@
+service_address:
+  user: "http://[::1]:50051"

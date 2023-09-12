@@ -1,0 +1,3 @@
+[workspace]
+resolver = "2"
+members = ["avocado-proto", "avocado-base", "avocado-user", "avocado-crm"]

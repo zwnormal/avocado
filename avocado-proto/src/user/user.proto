@@ -1,0 +1,48 @@
+syntax = "proto3";
+package user;
+
+service User {
+  rpc Login(LoginRequest) returns (LoginReply);
+  rpc Add(AddRequest) returns (AddReply);
+  rpc List(ListRequest) returns (stream UserReply);
+  rpc WhoAmI(WhoAmIRequest) returns (UserReply);
+}
+
+enum Role {
+  NormalUser = 0;
+  Admin = 1;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginReply {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+message AddRequest {
+  string email = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string password = 4;
+  Role role = 5;
+}
+
+message AddReply {
+  string user_id = 1;
+}
+
+message ListRequest {}
+
+message WhoAmIRequest {}
+
+message UserReply {
+  string id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string role = 5;
+}
