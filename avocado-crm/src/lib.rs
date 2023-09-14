@@ -1,7 +1,7 @@
 use crate::db::sqlite::session::Store as SessionStore;
 use crate::middleware::auth::auth;
 use crate::state::State;
-use axum::http::StatusCode;
+use axum::http::{Method, StatusCode};
 use axum::middleware::from_fn_with_state;
 use axum::response::IntoResponse;
 use axum::routing::{get, post, IntoMakeService};
@@ -10,7 +10,7 @@ use hyper::server::conn::AddrIncoming;
 use hyper::Server;
 use std::net::SocketAddr;
 use tower::ServiceBuilder;
-use tower_http::trace::TraceLayer;
+use tower_http::cors::{Any, CorsLayer};
 
 mod cfg;
 mod cmd;
@@ -23,8 +23,13 @@ mod user;
 
 pub async fn run(address: SocketAddr) -> Server<AddrIncoming, IntoMakeService<Router>> {
     let state = State::new(SessionStore::new().await);
+    let cors = CorsLayer::new()
+        .allow_methods([Method::GET, Method::POST, Method::DELETE])
+        .allow_headers(Any)
+        .allow_origin(Any);
+
     let layer = ServiceBuilder::new()
-        .layer(TraceLayer::new_for_http())
+        .layer(cors)
         .layer(from_fn_with_state(state.clone(), auth));
 
     let app = Router::new()
