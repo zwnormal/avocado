@@ -1,4 +1,4 @@
-use crate::base::{FieldType, Value};
+use crate::base::{FieldType, SchemaError, SchemaResult, Value};
 use crate::core::constraint::Constraint;
 
 #[derive(Debug)]
@@ -7,21 +7,21 @@ pub struct Type {
 }
 
 impl Constraint for Type {
-    fn verify(&self) -> Result<(), String> {
+    fn verify(&self) -> SchemaResult {
         Ok(())
     }
 
-    fn validate(&self, val: &Value) -> Result<(), String> {
+    fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Boolean(_) if matches!(self.typed, FieldType::Boolean) => Ok(()),
             Value::Integer(_) if matches!(self.typed, FieldType::Integer) => Ok(()),
             Value::String(_) if matches!(self.typed, FieldType::String) => Ok(()),
             Value::Array(_) if matches!(self.typed, FieldType::Array) => Ok(()),
             Value::Null => Ok(()),
-            _ => Err(format!(
-                "The value {} is not type {} (Type)",
-                val, self.typed
-            )),
+            _ => Err(SchemaError::VerificationFailed {
+                message: format!("The value {} is not type {} (Type)", val, self.typed),
+                constraint_name: "Type".to_string(),
+            }),
         }
     }
 }

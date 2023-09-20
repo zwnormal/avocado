@@ -1,4 +1,4 @@
-use crate::base::Value;
+use crate::base::{SchemaError, SchemaResult, Value};
 use crate::core::constraint::Constraint;
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -8,21 +8,29 @@ pub struct MaxLength {
 }
 
 impl Constraint for MaxLength {
-    fn verify(&self) -> Result<(), String> {
+    fn verify(&self) -> SchemaResult {
         if self.max_length == 0 {
-            Err("The max length is 0".to_string())
+            Err(SchemaError::VerifyFailed {
+                message: "The max length is 0".to_string(),
+                constraint_name: "MaxLength".to_string(),
+            })
         } else {
             Ok(())
         }
     }
 
-    fn validate(&self, val: &Value) -> Result<(), String> {
+    fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::String(v) if v.graphemes(true).count() > self.max_length => Err(format!(
-                "The length of {} is larger then {} (MaxLength)",
-                v,
-                v.graphemes(true).count()
-            )),
+            Value::String(v) if v.graphemes(true).count() > self.max_length => {
+                Err(SchemaError::VerificationFailed {
+                    message: format!(
+                        "The length of {} is larger then {}",
+                        v,
+                        v.graphemes(true).count()
+                    ),
+                    constraint_name: "MaxLength".to_string(),
+                })
+            }
             _ => Ok(()),
         }
     }

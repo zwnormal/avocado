@@ -1,4 +1,4 @@
-use crate::base::Value;
+use crate::base::{SchemaError, SchemaResult, Value};
 use crate::core::constraint::Constraint;
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -8,16 +8,18 @@ pub struct MinLength {
 }
 
 impl Constraint for MinLength {
-    fn verify(&self) -> Result<(), String> {
+    fn verify(&self) -> SchemaResult {
         Ok(())
     }
 
-    fn validate(&self, val: &Value) -> Result<(), String> {
+    fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::String(v) if v.graphemes(true).count() < self.min_length => Err(format!(
-                "The length of {} is less then {} (MinLength)",
-                v, self.min_length
-            )),
+            Value::String(v) if v.graphemes(true).count() < self.min_length => {
+                Err(SchemaError::VerificationFailed {
+                    message: format!("The length of {} is less then {}", v, self.min_length),
+                    constraint_name: "MinLength".to_string(),
+                })
+            }
             _ => Ok(()),
         }
     }

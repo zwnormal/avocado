@@ -1,6 +1,23 @@
 use std::collections::HashMap;
 use std::fmt;
 use std::fmt::{Debug, Formatter};
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum SchemaError {
+    #[error("{message} ({constraint_name}")]
+    VerifyFailed {
+        message: String,
+        constraint_name: String,
+    },
+    #[error("{message} ({constraint_name})")]
+    VerificationFailed {
+        message: String,
+        constraint_name: String,
+    },
+}
+
+pub type SchemaResult = Result<(), SchemaError>;
 
 #[derive(Debug)]
 pub enum FieldType {

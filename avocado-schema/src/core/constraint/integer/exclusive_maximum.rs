@@ -1,4 +1,4 @@
-use crate::base::Value;
+use crate::base::{SchemaError, SchemaResult, Value};
 use crate::core::constraint::Constraint;
 
 #[derive(Debug)]
@@ -7,16 +7,16 @@ pub struct ExclusiveMaximum {
 }
 
 impl Constraint for ExclusiveMaximum {
-    fn verify(&self) -> Result<(), String> {
+    fn verify(&self) -> SchemaResult {
         Ok(())
     }
 
-    fn validate(&self, val: &Value) -> Result<(), String> {
+    fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Integer(v) if *v >= self.max_val => Err(format!(
-                "The {} is larger then or equals to {} (ExclusiveMaximum)",
-                v, self.max_val
-            )),
+            Value::Integer(v) if *v >= self.max_val => Err(SchemaError::VerificationFailed {
+                message: format!("The {} is larger then or equals to {}", v, self.max_val),
+                constraint_name: "ExclusiveMaximum".to_string(),
+            }),
             _ => Ok(()),
         }
     }

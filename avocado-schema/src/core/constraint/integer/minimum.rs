@@ -1,4 +1,4 @@
-use crate::base::Value;
+use crate::base::{SchemaError, SchemaResult, Value};
 use crate::core::constraint::Constraint;
 
 #[derive(Debug)]
@@ -7,15 +7,16 @@ pub struct Minimum {
 }
 
 impl Constraint for Minimum {
-    fn verify(&self) -> Result<(), String> {
+    fn verify(&self) -> SchemaResult {
         Ok(())
     }
 
-    fn validate(&self, val: &Value) -> Result<(), String> {
+    fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Integer(v) if *v < self.min_val => {
-                Err(format!("The {} is less then {} (Minimum)", v, self.min_val))
-            }
+            Value::Integer(v) if *v < self.min_val => Err(SchemaError::VerificationFailed {
+                message: format!("The {} is less then {}", v, self.min_val),
+                constraint_name: "Minimum".to_string(),
+            }),
             _ => Ok(()),
         }
     }

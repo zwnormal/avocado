@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 uuid = { version = "1.4", features = ["v4", "fast-rng", "macro-diagnostics"]}
 unicode-segmentation = "1.10.1"
+regex = { version = "1.9.5", features = [] }
+thiserror = "1.0"

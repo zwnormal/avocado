@@ -1,4 +1,4 @@
-use crate::base::Value;
+use crate::base::{SchemaError, SchemaResult, Value};
 use crate::core::constraint::Constraint;
 
 #[derive(Debug)]
@@ -7,15 +7,18 @@ pub struct Required {
 }
 
 impl Constraint for Required {
-    fn verify(&self) -> Result<(), String> {
+    fn verify(&self) -> SchemaResult {
         Ok(())
     }
 
-    fn validate(&self, val: &Value) -> Result<(), String> {
+    fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Null => {
                 if self.required {
-                    Err("The value is required (Required)".to_string())
+                    Err(SchemaError::VerificationFailed {
+                        message: "The value is required".to_string(),
+                        constraint_name: "Required".to_string(),
+                    })
                 } else {
                     Ok(())
                 }

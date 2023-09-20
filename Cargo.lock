@@ -2089,6 +2089,8 @@ dependencies = [
 name = "schema_core"
 version = "0.1.0"
 dependencies = [
+ "regex",
+ "thiserror",
  "unicode-segmentation",
  "uuid",
 ]

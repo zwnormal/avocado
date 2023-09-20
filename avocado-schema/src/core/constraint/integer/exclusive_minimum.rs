@@ -1,4 +1,4 @@
-use crate::base::Value;
+use crate::base::{SchemaError, SchemaResult, Value};
 use crate::core::constraint::Constraint;
 
 #[derive(Debug)]
@@ -7,16 +7,16 @@ pub struct ExclusiveMinimum {
 }
 
 impl Constraint for ExclusiveMinimum {
-    fn verify(&self) -> Result<(), String> {
+    fn verify(&self) -> SchemaResult {
         Ok(())
     }
 
-    fn validate(&self, val: &Value) -> Result<(), String> {
+    fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Integer(v) if *v <= self.min_val => Err(format!(
-                "The {} is less then or equals to {} (ExclusiveMinimum)",
-                v, self.min_val
-            )),
+            Value::Integer(v) if *v <= self.min_val => Err(SchemaError::VerificationFailed {
+                message: format!("The {} is less then or equals to {}", v, self.min_val),
+                constraint_name: "ExclusiveMinimum".to_string(),
+            }),
             _ => Ok(()),
         }
     }

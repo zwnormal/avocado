@@ -1,4 +1,4 @@
-use crate::base::Value;
+use crate::base::{SchemaError, SchemaResult, Value};
 use crate::core::constraint::Constraint;
 
 #[derive(Debug)]
@@ -7,20 +7,23 @@ pub struct Enumeration {
 }
 
 impl Constraint for Enumeration {
-    fn verify(&self) -> Result<(), String> {
+    fn verify(&self) -> SchemaResult {
         if self.values.len() == 0 {
-            Err("Can not be empty (Enum of Integer)".to_string())
+            Err(SchemaError::VerifyFailed {
+                message: "Can not be empty".to_string(),
+                constraint_name: "Enum of Integer".to_string(),
+            })
         } else {
             Ok(())
         }
     }
 
-    fn validate(&self, val: &Value) -> Result<(), String> {
+    fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Integer(v) if !self.values.contains(v) => Err(format!(
-                "The integer {} is not valid value (Enum of Integer)",
-                v
-            )),
+            Value::Integer(v) if !self.values.contains(v) => Err(SchemaError::VerificationFailed {
+                message: format!("The integer {} is not valid value", v),
+                constraint_name: "Enum of Integer".to_string(),
+            }),
             _ => Ok(()),
         }
     }

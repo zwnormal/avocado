@@ -1,8 +1,8 @@
-use crate::base::Value;
+use crate::base::{SchemaResult, Value};
 
 pub trait Constraint {
-    fn verify(&self) -> Result<(), String>;
-    fn validate(&self, val: &Value) -> Result<(), String>;
+    fn verify(&self) -> SchemaResult;
+    fn validate(&self, val: &Value) -> SchemaResult;
 }
 
 pub mod common;
