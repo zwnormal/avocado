@@ -1,4 +1,2 @@
-.idea
-.vscode
 src/grpc/jwt.rs
 src/grpc/user.rs

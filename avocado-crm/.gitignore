@@ -1,6 +1,2 @@
-/target
-.idea
-/src/grpc/user/jwt.rs
-/src/grpc/user/user.rs
 config.crm.yaml
 config.user.yaml
