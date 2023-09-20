@@ -7,4 +7,5 @@ pub trait Constraint {
 
 pub mod common;
 pub mod integer;
+pub mod object;
 pub mod string;
