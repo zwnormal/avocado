@@ -1,6 +1,7 @@
-use crate::base::{SchemaError, SchemaResult, Value};
+use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
 use regex::Regex;
+use serde_json::Value;
 
 #[derive(Debug)]
 pub struct Pattern {
@@ -40,9 +41,9 @@ impl Constraint for Pattern {
 
 #[cfg(test)]
 mod tests {
-    use crate::base::Value;
     use crate::core::constraint::string::pattern::Pattern;
     use crate::core::constraint::Constraint;
+    use serde_json::Value;
 
     #[test]
     fn test_pattern() {

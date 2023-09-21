@@ -1,5 +1,6 @@
-use crate::base::{SchemaError, SchemaResult, Value};
+use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde_json::Value;
 use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Debug)]
@@ -38,9 +39,9 @@ impl Constraint for MaxLength {
 
 #[cfg(test)]
 mod tests {
-    use crate::base::Value;
     use crate::core::constraint::string::max_length::MaxLength;
     use crate::core::constraint::Constraint;
+    use serde_json::Value;
 
     #[test]
     fn test_max_length() {

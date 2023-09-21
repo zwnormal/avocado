@@ -1,4 +1,5 @@
-use crate::base::{SchemaResult, Value};
+use crate::base::SchemaResult;
+use serde_json::Value;
 
 pub trait Constraint {
     fn verify(&self) -> SchemaResult;

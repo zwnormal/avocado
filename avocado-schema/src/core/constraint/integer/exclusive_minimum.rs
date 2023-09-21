@@ -1,5 +1,6 @@
-use crate::base::{SchemaError, SchemaResult, Value};
+use crate::base::{number_as_i64, SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde_json::Value;
 
 #[derive(Debug)]
 pub struct ExclusiveMinimum {
@@ -13,10 +14,12 @@ impl Constraint for ExclusiveMinimum {
 
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Integer(v) if *v <= self.min_val => Err(SchemaError::VerificationFailed {
-                message: format!("The {} is less then or equals to {}", v, self.min_val),
-                constraint_name: "ExclusiveMinimum".to_string(),
-            }),
+            Value::Number(v) if number_as_i64(v)? <= self.min_val => {
+                Err(SchemaError::VerificationFailed {
+                    message: format!("The {} is less then or equals to {}", v, self.min_val),
+                    constraint_name: "ExclusiveMinimum".to_string(),
+                })
+            }
             _ => Ok(()),
         }
     }
@@ -24,22 +27,22 @@ impl Constraint for ExclusiveMinimum {
 
 #[cfg(test)]
 mod tests {
-    use crate::base::Value;
     use crate::core::constraint::integer::exclusive_minimum::ExclusiveMinimum;
     use crate::core::constraint::Constraint;
+    use serde_json::Value;
 
     #[test]
     fn test_exclusive_minimum() {
         let constraint = ExclusiveMinimum { min_val: 10 };
 
-        let value = Value::Integer(11);
+        let value = Value::Number(11.into());
         assert!(constraint.verify().is_ok());
         assert!(constraint.validate(&value).is_ok());
 
-        let value = Value::Integer(10);
+        let value = Value::Number(10.into());
         assert!(constraint.validate(&value).is_err());
 
-        let value = Value::Integer(3);
+        let value = Value::Number(3.into());
         assert!(constraint.validate(&value).is_err());
     }
 }

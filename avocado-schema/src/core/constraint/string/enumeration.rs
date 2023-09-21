@@ -1,5 +1,6 @@
-use crate::base::{SchemaError, SchemaResult, Value};
+use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde_json::Value;
 
 #[derive(Debug)]
 pub struct Enumeration {
@@ -31,9 +32,9 @@ impl Constraint for Enumeration {
 
 #[cfg(test)]
 mod tests {
-    use crate::base::Value;
     use crate::core::constraint::string::enumeration::Enumeration;
     use crate::core::constraint::Constraint;
+    use serde_json::Value;
 
     #[test]
     fn test_enumeration() {

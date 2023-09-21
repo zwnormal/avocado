@@ -1,5 +1,6 @@
-use crate::base::{SchemaError, SchemaResult, Value};
+use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde_json::Value;
 
 #[derive(Debug)]
 pub struct Required {

@@ -1,5 +1,6 @@
-use crate::base::{SchemaError, SchemaResult, Value};
+use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde_json::Value;
 use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Debug)]
@@ -27,9 +28,9 @@ impl Constraint for MinLength {
 
 #[cfg(test)]
 mod tests {
-    use crate::base::Value;
     use crate::core::constraint::string::min_length::MinLength;
     use crate::core::constraint::Constraint;
+    use serde_json::Value;
 
     #[test]
     fn test_min_length() {
