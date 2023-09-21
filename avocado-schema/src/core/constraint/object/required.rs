@@ -43,3 +43,34 @@ impl Constraint for Required {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use crate::core::constraint::object::required::Required;
+    use crate::core::constraint::Constraint;
+    use serde::Serialize;
+
+    #[test]
+    fn test_required() {
+        #[derive(Serialize)]
+        struct Document {
+            title: String,
+        }
+
+        let document = serde_json::to_value(Document {
+            title: "Document Title".to_string(),
+        })
+        .expect("failed to serialise document");
+
+        let constraint = Required {
+            required: vec!["title".to_string()],
+        };
+        assert!(constraint.verify().is_ok());
+        assert!(constraint.validate(&document).is_ok());
+
+        let constraint = Required {
+            required: vec!["title".to_string(), "body".to_string()],
+        };
+        assert!(constraint.validate(&document).is_err());
+    }
+}
