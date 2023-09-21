@@ -53,7 +53,7 @@ pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {
         match value.as_i64() {
             Some(v) => Ok(v),
             None => Err(SchemaError::VerificationFailed {
-                message: format!("The value {} overflows integer", value),
+                message: format!("The value {} overflows signed integer", value),
                 constraint_name: "Type".to_string(),
             }),
         }
