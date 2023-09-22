@@ -52,7 +52,7 @@ pub(crate) struct Config {
 }
 
 impl Config {
-    #[cfg(not(test))]
+    #[cfg(not(any(test, debug_assertions)))]
     pub(crate) fn new() -> Self {
         let config = config::Config::builder()
             .add_source(config::File::new(
@@ -64,7 +64,7 @@ impl Config {
         config.try_deserialize::<Config>().unwrap()
     }
 
-    #[cfg(test)]
+    #[cfg(any(test, debug_assertions))]
     pub(crate) fn new() -> Self {
         let jwt = Jwt {
             access_token_expire_in: 600,
