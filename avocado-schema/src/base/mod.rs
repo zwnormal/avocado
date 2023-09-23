@@ -6,12 +6,12 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum SchemaError {
     #[error("{message} ({constraint_name}")]
-    VerifyFailed {
+    Verify {
         message: String,
         constraint_name: String,
     },
     #[error("{message} ({constraint_name})")]
-    VerificationFailed {
+    Verification {
         message: String,
         constraint_name: String,
     },
@@ -52,13 +52,13 @@ pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {
     if value.is_i64() || value.is_u64() {
         match value.as_i64() {
             Some(v) => Ok(v),
-            None => Err(SchemaError::VerificationFailed {
+            None => Err(SchemaError::Verification {
                 message: format!("The value {} overflows signed integer", value),
                 constraint_name: "Type".to_string(),
             }),
         }
     } else {
-        Err(SchemaError::VerificationFailed {
+        Err(SchemaError::Verification {
             message: format!(
                 "The value {} is {}, not {}",
                 value,

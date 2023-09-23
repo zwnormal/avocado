@@ -31,7 +31,7 @@ impl Constraint for Required {
                 }
 
                 if missing_fields.len() > 0 {
-                    Err(SchemaError::VerificationFailed {
+                    Err(SchemaError::Verification {
                         message: format!("[{}] field(s) are required", missing_fields.join(", ")),
                         constraint_name: "Required".to_string(),
                     })

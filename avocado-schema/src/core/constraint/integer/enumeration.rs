@@ -10,7 +10,7 @@ pub struct Enumeration {
 impl Constraint for Enumeration {
     fn verify(&self) -> SchemaResult {
         if self.values.len() == 0 {
-            Err(SchemaError::VerifyFailed {
+            Err(SchemaError::Verify {
                 message: "Can not be empty".to_string(),
                 constraint_name: "Enum of Integer".to_string(),
             })
@@ -22,7 +22,7 @@ impl Constraint for Enumeration {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Number(v) if !self.values.contains(&number_as_i64(v)?) => {
-                Err(SchemaError::VerificationFailed {
+                Err(SchemaError::Verification {
                     message: format!("The integer {} is not valid value", v),
                     constraint_name: "Enum of Integer".to_string(),
                 })

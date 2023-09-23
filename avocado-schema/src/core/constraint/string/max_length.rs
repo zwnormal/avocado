@@ -11,7 +11,7 @@ pub struct MaxLength {
 impl Constraint for MaxLength {
     fn verify(&self) -> SchemaResult {
         if self.max_length == 0 {
-            Err(SchemaError::VerifyFailed {
+            Err(SchemaError::Verify {
                 message: "The max length is 0".to_string(),
                 constraint_name: "MaxLength".to_string(),
             })
@@ -23,7 +23,7 @@ impl Constraint for MaxLength {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::String(v) if v.graphemes(true).count() > self.max_length => {
-                Err(SchemaError::VerificationFailed {
+                Err(SchemaError::Verification {
                     message: format!(
                         "The length of {} is larger then {}",
                         v,

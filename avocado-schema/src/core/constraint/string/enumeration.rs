@@ -10,7 +10,7 @@ pub struct Enumeration {
 impl Constraint for Enumeration {
     fn verify(&self) -> SchemaResult {
         if self.values.len() == 0 {
-            Err(SchemaError::VerifyFailed {
+            Err(SchemaError::Verify {
                 message: "Can not be empty".to_string(),
                 constraint_name: "Enum of String".to_string(),
             })
@@ -21,7 +21,7 @@ impl Constraint for Enumeration {
 
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::String(v) if !self.values.contains(v) => Err(SchemaError::VerificationFailed {
+            Value::String(v) if !self.values.contains(v) => Err(SchemaError::Verification {
                 message: format!("The string {} is not valid value", v),
                 constraint_name: "Enum of String".to_string(),
             }),

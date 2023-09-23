@@ -11,7 +11,7 @@ pub struct Pattern {
 impl Pattern {
     fn regex(&self) -> Result<Regex, SchemaError> {
         Ok(
-            Regex::new(self.pattern.as_str()).map_err(|e| SchemaError::VerifyFailed {
+            Regex::new(self.pattern.as_str()).map_err(|e| SchemaError::Verify {
                 message: e.to_string(),
                 constraint_name: "Pattern".to_string(),
             })?,
@@ -28,12 +28,10 @@ impl Constraint for Pattern {
     fn validate(&self, val: &Value) -> SchemaResult {
         let regex = self.regex()?;
         match val {
-            Value::String(v) if !regex.is_match(v.as_str()) => {
-                Err(SchemaError::VerificationFailed {
-                    message: format!("{} does not match pattern {}", self.pattern, v),
-                    constraint_name: "Pattern".to_string(),
-                })
-            }
+            Value::String(v) if !regex.is_match(v.as_str()) => Err(SchemaError::Verification {
+                message: format!("{} does not match pattern {}", self.pattern, v),
+                constraint_name: "Pattern".to_string(),
+            }),
             _ => Ok(()),
         }
     }

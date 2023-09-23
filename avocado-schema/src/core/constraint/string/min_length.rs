@@ -16,7 +16,7 @@ impl Constraint for MinLength {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::String(v) if v.graphemes(true).count() < self.min_length => {
-                Err(SchemaError::VerificationFailed {
+                Err(SchemaError::Verification {
                     message: format!("The length of {} is less then {}", v, self.min_length),
                     constraint_name: "MinLength".to_string(),
                 })

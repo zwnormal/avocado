@@ -15,7 +15,7 @@ impl Constraint for ExclusiveMaximum {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Number(v) if number_as_i64(v)? >= self.max_val => {
-                Err(SchemaError::VerificationFailed {
+                Err(SchemaError::Verification {
                     message: format!("The {} is larger then or equals to {}", v, self.max_val),
                     constraint_name: "ExclusiveMaximum".to_string(),
                 })
