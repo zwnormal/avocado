@@ -8,13 +8,6 @@ pub struct BooleanField {
 
 impl BooleanField {
     const TYPE: FieldType = FieldType::Boolean;
-
-    pub fn new(name: &'static str, title: &'static str) -> Self {
-        BooleanField {
-            name: name.to_string(),
-            title: title.to_string(),
-        }
-    }
 }
 
 impl Field for BooleanField {

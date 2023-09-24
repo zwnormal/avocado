@@ -1,20 +1,21 @@
 use crate::base::{Field, FieldType};
+use crate::core::constraint::string::enumeration::Enumeration;
+use crate::core::constraint::string::max_length::MaxLength;
+use crate::core::constraint::string::min_length::MinLength;
+use crate::core::constraint::string::pattern::Pattern;
 
 #[derive(Debug)]
 pub struct StringField {
     pub name: String,
     pub title: String,
+    pub enumeration: Option<Enumeration>,
+    pub max_length: Option<MaxLength>,
+    pub min_length: Option<MinLength>,
+    pub pattern: Option<Pattern>,
 }
 
 impl StringField {
     const TYPE: FieldType = FieldType::String;
-
-    pub fn new(name: &'static str, title: &'static str) -> Self {
-        StringField {
-            name: name.to_string(),
-            title: title.to_string(),
-        }
-    }
 }
 
 impl Field for StringField {

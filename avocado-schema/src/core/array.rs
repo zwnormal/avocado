@@ -4,24 +4,11 @@ use crate::base::{Field, FieldType};
 pub struct ArrayField<T: Field> {
     pub name: String,
     pub title: String,
-    pub fields: Vec<T>,
+    pub items: T,
 }
 
 impl<T: Field> ArrayField<T> {
     const TYPE: FieldType = FieldType::Array;
-
-    pub fn new(name: &'static str, title: &'static str) -> Self {
-        ArrayField {
-            name: name.to_string(),
-            title: title.to_string(),
-            fields: Vec::new(),
-        }
-    }
-
-    pub fn add_field(&mut self, field: T) -> Result<(), String> {
-        self.fields.push(field);
-        Ok(())
-    }
 }
 
 impl<T: Field> Field for ArrayField<T> {
