@@ -8,7 +8,9 @@ use std::time::Duration;
 use tokio::time::{sleep, timeout};
 
 pub static TRACING: Lazy<()> = Lazy::new(|| {
-    init_subscriber();
+    if std::env::var("TEST_LOG").is_ok() {
+        init_subscriber();
+    }
 });
 
 pub async fn start_user_server() {

@@ -7,8 +7,9 @@ The purpose of experimental project Avocado is to explore the new way of buildin
 2. Rust crate [tonic](https://github.com/hyperium/tonic) is used to build grpc endpoints, so please follow the Dependencies section of the README on the repo to install tools for compiling proto IDL.
 3. To run both unit tests and integration tests:
     ```commandline
-    cargo test --workspace
+    TEST_LOG=1 cargo test --workspace
     ```
+   The flag `TEST_LOG` enables the tracing when running tests.
 4. The `avocado-user` component acts as an independent microservice for user authenticate and authorisation. To start `avocado-user` component:
     ```commandline
     cargo run --bin avocado-user

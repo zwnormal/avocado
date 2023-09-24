@@ -10,7 +10,7 @@ pub fn init_subscriber() {
         .with_line_number(true)
         .with_thread_ids(false)
         .with_target(false)
-        .with_span_events(FmtSpan::FULL)
+        .with_span_events(FmtSpan::NEW | FmtSpan::CLOSE)
         .finish();
     set_global_default(subscriber).expect("Failed to set subscriber");
 }
