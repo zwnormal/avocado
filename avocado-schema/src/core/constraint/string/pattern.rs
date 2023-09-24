@@ -3,7 +3,7 @@ use crate::core::constraint::Constraint;
 use regex::Regex;
 use serde_json::Value;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Pattern {
     pub pattern: String,
 }

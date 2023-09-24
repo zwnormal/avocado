@@ -2,7 +2,7 @@ use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
 use serde_json::Value;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Enumeration {
     pub values: Vec<String>,
 }
