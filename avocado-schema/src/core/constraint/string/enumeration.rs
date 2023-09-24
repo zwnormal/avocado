@@ -1,10 +1,25 @@
 use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde::ser::SerializeSeq;
+use serde::{Serialize, Serializer};
 use serde_json::Value;
 
 #[derive(Clone, Debug)]
 pub struct Enumeration {
     pub values: Vec<String>,
+}
+
+impl Serialize for Enumeration {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut seq = serializer.serialize_seq(Some(self.values.len()))?;
+        for element in &self.values {
+            seq.serialize_element(element)?;
+        }
+        seq.end()
+    }
 }
 
 impl Constraint for Enumeration {

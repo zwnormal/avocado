@@ -1,11 +1,21 @@
 use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde::{Serialize, Serializer};
 use serde_json::Value;
 use unicode_segmentation::UnicodeSegmentation;
 
 #[derive(Debug)]
 pub struct MaxLength {
-    pub max_length: usize,
+    pub max_length: u64,
+}
+
+impl Serialize for MaxLength {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_u64(self.max_length)
+    }
 }
 
 impl Constraint for MaxLength {
@@ -22,7 +32,7 @@ impl Constraint for MaxLength {
 
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::String(v) if v.graphemes(true).count() > self.max_length => {
+            Value::String(v) if v.graphemes(true).count() > self.max_length as usize => {
                 Err(SchemaError::Verification {
                     message: format!(
                         "The length of {} is larger then {}",

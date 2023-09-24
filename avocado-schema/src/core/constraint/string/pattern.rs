@@ -1,11 +1,21 @@
 use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
 use regex::Regex;
+use serde::{Serialize, Serializer};
 use serde_json::Value;
 
 #[derive(Clone, Debug)]
 pub struct Pattern {
     pub pattern: String,
+}
+
+impl Serialize for Pattern {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(self.pattern.as_str())
+    }
 }
 
 impl Pattern {
