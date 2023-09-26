@@ -1,9 +1,13 @@
 use crate::base::{SchemaError, SchemaResult};
-use crate::core::constraint::common::enumeration::Enumeration as GenericEnumeration;
 use crate::core::constraint::Constraint;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-pub type Enumeration = GenericEnumeration<String>;
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Enumeration {
+    #[serde(rename = "enum")]
+    pub values: Vec<String>,
+}
 
 impl Constraint for Enumeration {
     fn verify(&self) -> SchemaResult {

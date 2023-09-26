@@ -9,11 +9,11 @@ use serde::{Deserialize, Serialize};
 pub struct StringField {
     pub name: String,
     pub title: String,
-    #[serde(rename = "enum")]
+    #[serde(flatten)]
     pub enumeration: Option<Enumeration>,
-    #[serde(rename = "maxLength")]
+    #[serde(flatten)]
     pub max_length: Option<MaxLength>,
-    #[serde(rename = "minLength")]
+    #[serde(flatten)]
     pub min_length: Option<MinLength>,
     pub pattern: Option<Pattern>,
 }

@@ -1,9 +1,11 @@
 use crate::base::{number_as_i64, SchemaError, SchemaResult};
-use crate::core::constraint::common::enumeration::Enumeration as GenericEnumeration;
 use crate::core::constraint::Constraint;
 use serde_json::Value;
 
-pub type Enumeration = GenericEnumeration<i64>;
+#[derive(Debug)]
+pub struct Enumeration {
+    pub values: Vec<i64>,
+}
 
 impl Constraint for Enumeration {
     fn verify(&self) -> SchemaResult {
