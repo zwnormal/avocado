@@ -1,8 +1,9 @@
 use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Required {
     pub required: Vec<String>,
 }

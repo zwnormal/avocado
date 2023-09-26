@@ -1,9 +1,11 @@
 use crate::base::{number_as_i64, SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Maximum {
+    #[serde(rename = "maximum")]
     pub max_val: i64,
 }
 

@@ -1,6 +1,7 @@
 use crate::base::{Field, FieldType};
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct BooleanField {
     pub name: String,
     pub title: String,
