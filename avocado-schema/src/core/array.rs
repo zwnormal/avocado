@@ -1,17 +1,17 @@
 use crate::base::{Field, FieldType};
 
 #[derive(Debug)]
-pub struct ArrayField<T: Field> {
+pub struct ArrayField {
     pub name: String,
     pub title: String,
-    pub items: T,
+    pub items: Box<dyn Field>,
 }
 
-impl<T: Field> ArrayField<T> {
+impl ArrayField {
     const TYPE: FieldType = FieldType::Array;
 }
 
-impl<T: Field> Field for ArrayField<T> {
+impl Field for ArrayField {
     fn name(&self) -> String {
         self.name.clone()
     }
