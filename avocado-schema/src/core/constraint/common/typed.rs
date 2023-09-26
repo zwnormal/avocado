@@ -1,9 +1,11 @@
 use crate::base::{FieldType, SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Type {
+    #[serde(rename = "type")]
     pub typed: FieldType,
 }
 
