@@ -35,12 +35,12 @@ pub struct ValidationErrorsParser;
 
 impl ValidationErrorsParser {
     pub fn parse(&self, errors: ValidationErrors) -> HashMap<String, ValidationMessageKind> {
-        self.visit_validation_errors(Box::new(errors))
+        self.visit_validation_errors(errors)
     }
 
     fn visit_validation_errors(
         &self,
-        errors: Box<ValidationErrors>,
+        errors: ValidationErrors,
     ) -> HashMap<String, ValidationMessageKind> {
         let mut result = HashMap::new();
         for (field, error) in errors.into_errors() {
@@ -48,13 +48,13 @@ impl ValidationErrorsParser {
                 ValidationErrorsKind::Struct(e) => {
                     result.insert(
                         field.to_string(),
-                        ValidationMessageKind::Struct(self.visit_validation_errors(e)),
+                        ValidationMessageKind::Struct(self.visit_validation_errors(*e)),
                     );
                 }
                 ValidationErrorsKind::List(e) => {
                     let mut child_errors = vec![];
                     for (_, e) in e {
-                        child_errors.push(self.visit_validation_errors(e));
+                        child_errors.push(self.visit_validation_errors(*e));
                     }
                     result.insert(field.to_string(), ValidationMessageKind::List(child_errors));
                 }

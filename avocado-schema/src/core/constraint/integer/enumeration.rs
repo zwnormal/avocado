@@ -7,7 +7,7 @@ pub type Enumeration = GenericEnumeration<i64>;
 
 impl Constraint for Enumeration {
     fn verify(&self) -> SchemaResult {
-        if self.values.len() == 0 {
+        if self.values.is_empty() {
             Err(SchemaError::Verify {
                 message: "Can not be empty".to_string(),
                 constraint_name: "Enum of Integer".to_string(),

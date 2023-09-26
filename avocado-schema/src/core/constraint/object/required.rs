@@ -21,16 +21,14 @@ impl Constraint for Required {
                         None => {
                             missing_fields.push(field.clone());
                         }
-                        Some(v) => match v {
-                            Value::Null => {
-                                missing_fields.push(field.clone());
-                            }
-                            _ => {}
-                        },
+                        Some(v) if v == &Value::Null => {
+                            missing_fields.push(field.clone());
+                        }
+                        _ => {}
                     }
                 }
 
-                if missing_fields.len() > 0 {
+                if !missing_fields.is_empty() {
                     Err(SchemaError::Verification {
                         message: format!("[{}] field(s) are required", missing_fields.join(", ")),
                         constraint_name: "Required".to_string(),
