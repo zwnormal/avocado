@@ -1,4 +1,4 @@
-use crate::base::{Field, FieldType};
+use crate::base::Field;
 use crate::core::constraint::integer::enumeration::Enumeration;
 use crate::core::constraint::integer::exclusive_maximum::ExclusiveMaximum;
 use crate::core::constraint::integer::exclusive_minimum::ExclusiveMinimum;
@@ -22,10 +22,7 @@ pub struct IntegerField {
     pub exclusive_minimum: Option<ExclusiveMinimum>,
 }
 
-impl IntegerField {
-    const TYPE: FieldType = FieldType::Integer;
-}
-
+#[typetag::serde(name = "integer")]
 impl Field for IntegerField {
     fn name(&self) -> String {
         self.name.clone()
@@ -33,9 +30,5 @@ impl Field for IntegerField {
 
     fn title(&self) -> String {
         self.title.clone()
-    }
-
-    fn get_type(&self) -> FieldType {
-        Self::TYPE
     }
 }

@@ -1,4 +1,4 @@
-use crate::base::{Field, FieldType};
+use crate::base::Field;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -7,10 +7,7 @@ pub struct BooleanField {
     pub title: String,
 }
 
-impl BooleanField {
-    const TYPE: FieldType = FieldType::Boolean;
-}
-
+#[typetag::serde(name = "boolean")]
 impl Field for BooleanField {
     fn name(&self) -> String {
         self.name.clone()
@@ -18,9 +15,5 @@ impl Field for BooleanField {
 
     fn title(&self) -> String {
         self.title.clone()
-    }
-
-    fn get_type(&self) -> FieldType {
-        Self::TYPE
     }
 }

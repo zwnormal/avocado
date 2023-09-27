@@ -87,10 +87,10 @@ impl fmt::Display for FieldType {
     }
 }
 
+#[typetag::serde(tag = "type")]
 pub trait Field: Debug {
     fn name(&self) -> String;
     fn title(&self) -> String;
-    fn get_type(&self) -> FieldType;
 }
 
 pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {

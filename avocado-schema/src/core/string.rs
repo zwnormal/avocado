@@ -1,4 +1,4 @@
-use crate::base::{Field, FieldType};
+use crate::base::Field;
 use crate::core::constraint::string::enumeration::Enumeration;
 use crate::core::constraint::string::max_length::MaxLength;
 use crate::core::constraint::string::min_length::MinLength;
@@ -18,10 +18,7 @@ pub struct StringField {
     pub pattern: Option<Pattern>,
 }
 
-impl StringField {
-    const TYPE: FieldType = FieldType::String;
-}
-
+#[typetag::serde(name = "string")]
 impl Field for StringField {
     fn name(&self) -> String {
         self.name.clone()
@@ -29,10 +26,6 @@ impl Field for StringField {
 
     fn title(&self) -> String {
         self.title.clone()
-    }
-
-    fn get_type(&self) -> FieldType {
-        Self::TYPE
     }
 }
 
@@ -70,6 +63,7 @@ mod tests {
     fn test_deserialize() {
         let field_json = r#"
         {
+            "type":"string",
             "name": "type",
             "title": "Type",
             "enum": ["meeting", "email"],

@@ -1,8 +1,9 @@
-use crate::base::{Field, FieldType};
+use crate::base::Field;
 use crate::core::constraint::object::required::Required;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ObjectField {
     pub name: String,
     pub title: String,
@@ -10,10 +11,7 @@ pub struct ObjectField {
     pub required: Option<Required>,
 }
 
-impl ObjectField {
-    const TYPE: FieldType = FieldType::Object;
-}
-
+#[typetag::serde(name = "object")]
 impl Field for ObjectField {
     fn name(&self) -> String {
         self.name.clone()
@@ -21,9 +19,5 @@ impl Field for ObjectField {
 
     fn title(&self) -> String {
         self.title.clone()
-    }
-
-    fn get_type(&self) -> FieldType {
-        Self::TYPE
     }
 }

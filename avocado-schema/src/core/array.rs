@@ -1,16 +1,14 @@
-use crate::base::{Field, FieldType};
+use crate::base::Field;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ArrayField {
     pub name: String,
     pub title: String,
     pub items: Box<dyn Field>,
 }
 
-impl ArrayField {
-    const TYPE: FieldType = FieldType::Array;
-}
-
+#[typetag::serde(name = "array")]
 impl Field for ArrayField {
     fn name(&self) -> String {
         self.name.clone()
@@ -18,9 +16,5 @@ impl Field for ArrayField {
 
     fn title(&self) -> String {
         self.title.clone()
-    }
-
-    fn get_type(&self) -> FieldType {
-        Self::TYPE
     }
 }
