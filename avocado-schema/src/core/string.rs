@@ -31,6 +31,7 @@ impl Field for StringField {
 
 #[cfg(test)]
 mod tests {
+    use crate::base::Field;
     use crate::core::constraint::string::enumeration::Enumeration;
     use crate::core::constraint::string::max_length::MaxLength;
     use crate::core::constraint::string::min_length::MinLength;
@@ -41,8 +42,8 @@ mod tests {
     #[test]
     fn test_serialize() {
         let field = StringField {
-            name: "type".to_string(),
-            title: "Type".to_string(),
+            name: "body".to_string(),
+            title: "Body".to_string(),
             enumeration: Some(Enumeration {
                 values: vec!["meeting".to_string(), "email".to_string()],
             }),
@@ -55,7 +56,14 @@ mod tests {
         let field_json = serde_json::to_string(&field).unwrap();
         assert_eq!(
             field_json,
-            r#"{"name":"type","title":"Type","enum":["meeting","email"],"maxLength":32,"minLength":8,"pattern":"[a-z]+"}"#
+            r#"{"name":"body","title":"Body","enum":["meeting","email"],"maxLength":32,"minLength":8,"pattern":"[a-z]+"}"#
+        );
+
+        let dyn_field: &dyn Field = &field;
+        let dyn_field_json = serde_json::to_string(&dyn_field).unwrap();
+        assert_eq!(
+            dyn_field_json,
+            r#"{"type":"string","name":"body","title":"Body","enum":["meeting","email"],"maxLength":32,"minLength":8,"pattern":"[a-z]+"}"#
         );
     }
 

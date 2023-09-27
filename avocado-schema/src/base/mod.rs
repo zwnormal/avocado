@@ -95,13 +95,10 @@ pub trait Field: Debug {
 
 pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {
     if value.is_i64() || value.is_u64() {
-        match value.as_i64() {
-            Some(v) => Ok(v),
-            None => Err(SchemaError::Verification {
-                message: format!("The value {} overflows signed integer", value),
-                constraint_name: "Type".to_string(),
-            }),
-        }
+        value.as_i64().ok_or(SchemaError::Verification {
+            message: format!("The value {} is not 64-bit signed integer", value),
+            constraint_name: "Type".to_string(),
+        })
     } else {
         Err(SchemaError::Verification {
             message: format!(
@@ -109,6 +106,25 @@ pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {
                 value,
                 FieldType::Float,
                 FieldType::Integer
+            ),
+            constraint_name: "Type".to_string(),
+        })
+    }
+}
+
+pub(crate) fn number_as_f64(value: &Number) -> Result<f64, SchemaError> {
+    if value.is_f64() {
+        value.as_f64().ok_or(SchemaError::Verification {
+            message: format!("The value {} is not 64-bit float", value),
+            constraint_name: "Type".to_string(),
+        })
+    } else {
+        Err(SchemaError::Verification {
+            message: format!(
+                "The value {} is {}, not {}",
+                value,
+                FieldType::Integer,
+                FieldType::Float
             ),
             constraint_name: "Type".to_string(),
         })
