@@ -1,4 +1,4 @@
-use crate::base::{Field, FieldType};
+use crate::base::field::{Field, FieldType};
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::string::enumeration::Enumeration;
 use crate::core::constraint::string::max_length::MaxLength;
@@ -52,7 +52,7 @@ impl Field for StringField {
 
 #[cfg(test)]
 mod tests {
-    use crate::base::Field;
+    use crate::base::field::Field;
     use crate::core::constraint::string::enumeration::Enumeration;
     use crate::core::constraint::string::max_length::MaxLength;
     use crate::core::constraint::string::min_length::MinLength;

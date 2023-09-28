@@ -1,4 +1,4 @@
-use crate::base::{Field, FieldType};
+use crate::base::field::{Field, FieldType};
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};

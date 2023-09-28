@@ -1,4 +1,5 @@
-use crate::base::{number_as_f64, SchemaError, SchemaResult};
+use crate::base::field::number_as_f64;
+use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;

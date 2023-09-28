@@ -1,4 +1,5 @@
-use crate::base::{FieldType, SchemaError, SchemaResult};
+use crate::base::field::FieldType;
+use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -36,7 +37,7 @@ impl Constraint for Type {
 
 #[cfg(test)]
 mod tests {
-    use crate::base::FieldType;
+    use crate::base::field::FieldType;
     use crate::core::constraint::common::typed::Type;
     use crate::core::constraint::Constraint;
     use serde_json::Value;

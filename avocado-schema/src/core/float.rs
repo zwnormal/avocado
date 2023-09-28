@@ -1,4 +1,4 @@
-use crate::base::{Field, FieldType};
+use crate::base::field::{Field, FieldType};
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::float::enumeration::Enumeration;
 use crate::core::constraint::float::exclusive_maximum::ExclusiveMaximum;
