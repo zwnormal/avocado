@@ -1,4 +1,5 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::Visitor as FieldVisitor;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
@@ -24,5 +25,9 @@ impl Field for ArrayField {
         vec![Box::new(Type {
             typed: FieldType::Array,
         })]
+    }
+
+    fn accept(&self, visitor: Box<dyn FieldVisitor>) {
+        visitor.visit_array(self);
     }
 }

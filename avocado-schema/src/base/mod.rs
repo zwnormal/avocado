@@ -18,3 +18,4 @@ pub enum SchemaError {
 pub type SchemaResult = Result<(), SchemaError>;
 
 pub(crate) mod field;
+pub(crate) mod visitor;

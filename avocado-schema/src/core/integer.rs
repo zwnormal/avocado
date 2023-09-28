@@ -1,4 +1,5 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::Visitor as FieldVisitor;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::integer::enumeration::Enumeration;
 use crate::core::constraint::integer::exclusive_maximum::ExclusiveMaximum;
@@ -54,5 +55,9 @@ impl Field for IntegerField {
             constraints.push(Box::new(self.exclusive_minimum.as_ref().unwrap().clone()))
         }
         constraints
+    }
+
+    fn accept(&self, visitor: Box<dyn FieldVisitor>) {
+        visitor.visit_integer(self);
     }
 }

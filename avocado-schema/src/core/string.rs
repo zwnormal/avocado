@@ -1,4 +1,5 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::Visitor as FieldVisitor;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::string::enumeration::Enumeration;
 use crate::core::constraint::string::max_length::MaxLength;
@@ -47,6 +48,10 @@ impl Field for StringField {
             constraints.push(Box::new(self.pattern.as_ref().unwrap().clone()))
         }
         constraints
+    }
+
+    fn accept(&self, visitor: Box<dyn FieldVisitor>) {
+        visitor.visit_string(self);
     }
 }
 

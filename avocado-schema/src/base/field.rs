@@ -1,3 +1,4 @@
+use crate::base::visitor::Visitor as FieldVisitor;
 use crate::base::SchemaError;
 use crate::core::constraint::Constraint;
 use serde::de::{Error, Visitor};
@@ -77,6 +78,7 @@ pub trait Field: Debug {
     fn name(&self) -> String;
     fn title(&self) -> String;
     fn constrains(&self) -> Vec<Box<dyn Constraint>>;
+    fn accept(&self, visitor: Box<dyn FieldVisitor>);
 }
 
 pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {

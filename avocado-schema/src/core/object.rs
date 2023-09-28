@@ -1,4 +1,5 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::Visitor as FieldVisitor;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::object::required::Required;
 use crate::core::constraint::Constraint;
@@ -31,5 +32,9 @@ impl Field for ObjectField {
             constraints.push(Box::new(self.required.as_ref().unwrap().clone()))
         }
         constraints
+    }
+
+    fn accept(&self, visitor: Box<dyn FieldVisitor>) {
+        visitor.visit_object(self);
     }
 }
