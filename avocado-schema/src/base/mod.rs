@@ -1,3 +1,4 @@
+use crate::core::constraint::Constraint;
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::Number;
@@ -91,6 +92,7 @@ impl fmt::Display for FieldType {
 pub trait Field: Debug {
     fn name(&self) -> String;
     fn title(&self) -> String;
+    fn constrains(&self) -> Vec<Box<dyn Constraint>>;
 }
 
 pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {

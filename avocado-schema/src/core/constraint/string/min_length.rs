@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use unicode_segmentation::UnicodeSegmentation;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MinLength {
     #[serde(rename = "minLength")]
     pub min_length: u64,

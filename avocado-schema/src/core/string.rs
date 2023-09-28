@@ -1,8 +1,10 @@
-use crate::base::Field;
+use crate::base::{Field, FieldType};
+use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::string::enumeration::Enumeration;
 use crate::core::constraint::string::max_length::MaxLength;
 use crate::core::constraint::string::min_length::MinLength;
 use crate::core::constraint::string::pattern::Pattern;
+use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -26,6 +28,25 @@ impl Field for StringField {
 
     fn title(&self) -> String {
         self.title.clone()
+    }
+
+    fn constrains(&self) -> Vec<Box<dyn Constraint>> {
+        let mut constraints: Vec<Box<dyn Constraint>> = vec![Box::new(Type {
+            typed: FieldType::String,
+        })];
+        if self.enumeration.is_some() {
+            constraints.push(Box::new(self.enumeration.as_ref().unwrap().clone()))
+        }
+        if self.max_length.is_some() {
+            constraints.push(Box::new(self.max_length.as_ref().unwrap().clone()))
+        }
+        if self.min_length.is_some() {
+            constraints.push(Box::new(self.min_length.as_ref().unwrap().clone()))
+        }
+        if self.pattern.is_some() {
+            constraints.push(Box::new(self.pattern.as_ref().unwrap().clone()))
+        }
+        constraints
     }
 }
 

@@ -1,4 +1,6 @@
-use crate::base::Field;
+use crate::base::{Field, FieldType};
+use crate::core::constraint::common::typed::Type;
+use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -16,5 +18,11 @@ impl Field for ArrayField {
 
     fn title(&self) -> String {
         self.title.clone()
+    }
+
+    fn constrains(&self) -> Vec<Box<dyn Constraint>> {
+        vec![Box::new(Type {
+            typed: FieldType::Array,
+        })]
     }
 }

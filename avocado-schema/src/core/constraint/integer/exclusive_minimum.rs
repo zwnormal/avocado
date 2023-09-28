@@ -3,7 +3,7 @@ use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ExclusiveMinimum {
     #[serde(rename = "exclusiveMinimum")]
     pub min_val: i64,
