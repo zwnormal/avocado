@@ -5,3 +5,4 @@ pub mod float;
 pub mod integer;
 pub mod object;
 pub mod string;
+pub mod visitor;

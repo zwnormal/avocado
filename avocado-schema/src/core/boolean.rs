@@ -26,7 +26,7 @@ impl Field for BooleanField {
         })]
     }
 
-    fn accept(&self, visitor: Box<dyn FieldVisitor>) {
+    fn accept(&self, mut visitor: Box<dyn FieldVisitor>) {
         visitor.visit_boolean(self);
     }
 }

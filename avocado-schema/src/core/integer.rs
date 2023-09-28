@@ -57,7 +57,7 @@ impl Field for IntegerField {
         constraints
     }
 
-    fn accept(&self, visitor: Box<dyn FieldVisitor>) {
+    fn accept(&self, mut visitor: Box<dyn FieldVisitor>) {
         visitor.visit_integer(self);
     }
 }

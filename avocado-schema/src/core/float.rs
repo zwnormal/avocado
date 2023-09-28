@@ -57,7 +57,7 @@ impl Field for FloatField {
         constraints
     }
 
-    fn accept(&self, visitor: Box<dyn FieldVisitor>) {
+    fn accept(&self, mut visitor: Box<dyn FieldVisitor>) {
         visitor.visit_float(self);
     }
 }

@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 pub struct ArrayField {
     pub name: String,
     pub title: String,
-    pub items: Box<dyn Field>,
+    pub item: Box<dyn Field>,
 }
 
 #[typetag::serde(name = "array")]
@@ -27,7 +27,7 @@ impl Field for ArrayField {
         })]
     }
 
-    fn accept(&self, visitor: Box<dyn FieldVisitor>) {
+    fn accept(&self, mut visitor: Box<dyn FieldVisitor>) {
         visitor.visit_array(self);
     }
 }
