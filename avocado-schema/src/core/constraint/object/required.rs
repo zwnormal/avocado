@@ -9,10 +9,6 @@ pub struct Required {
 }
 
 impl Constraint for Required {
-    fn verify(&self) -> SchemaResult {
-        Ok(())
-    }
-
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Object(o) => {
@@ -64,7 +60,6 @@ mod test {
         let constraint = Required {
             required: vec!["title".to_string()],
         };
-        assert!(constraint.verify().is_ok());
         assert!(constraint.validate(&document).is_ok());
 
         let constraint = Required {

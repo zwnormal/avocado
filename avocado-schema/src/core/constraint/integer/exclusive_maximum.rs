@@ -11,10 +11,6 @@ pub struct ExclusiveMaximum {
 }
 
 impl Constraint for ExclusiveMaximum {
-    fn verify(&self) -> SchemaResult {
-        Ok(())
-    }
-
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Number(v) if number_as_i64(v)? >= self.max_val => {
@@ -39,7 +35,6 @@ mod tests {
         let constraint = ExclusiveMaximum { max_val: 10 };
 
         let value = Value::Number(3.into());
-        assert!(constraint.verify().is_ok());
         assert!(constraint.validate(&value).is_ok());
 
         let value = Value::Number(10.into());

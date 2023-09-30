@@ -11,10 +11,6 @@ pub struct Minimum {
 }
 
 impl Constraint for Minimum {
-    fn verify(&self) -> SchemaResult {
-        Ok(())
-    }
-
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Number(v) if number_as_i64(v)? < self.min_val => {
@@ -39,7 +35,6 @@ mod tests {
         let constraint = Minimum { min_val: 10 };
 
         let value = Value::Number(11.into());
-        assert!(constraint.verify().is_ok());
         assert!(constraint.validate(&value).is_ok());
 
         let value = Value::Number(10.into());

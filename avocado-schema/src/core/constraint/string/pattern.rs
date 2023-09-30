@@ -51,10 +51,6 @@ impl<'de> Visitor<'de> for PatternVisitor {
 }
 
 impl Constraint for Pattern {
-    fn verify(&self) -> SchemaResult {
-        Ok(())
-    }
-
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::String(v) if !self.pattern.is_match(v.as_str()) => {
@@ -81,7 +77,6 @@ mod tests {
         };
 
         let value = Value::String("2010-03-14".to_string());
-        assert!(constraint.verify().is_ok());
         assert!(constraint.validate(&value).is_ok());
 
         let value = Value::String("Not Match".to_string());

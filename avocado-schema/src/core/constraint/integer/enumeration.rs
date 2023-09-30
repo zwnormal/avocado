@@ -11,17 +11,6 @@ pub struct Enumeration {
 }
 
 impl Constraint for Enumeration {
-    fn verify(&self) -> SchemaResult {
-        if self.values.is_empty() {
-            Err(SchemaError::Verify {
-                message: "Can not be empty".to_string(),
-                constraint_name: "Enum of Integer".to_string(),
-            })
-        } else {
-            Ok(())
-        }
-    }
-
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Number(v) if !self.values.contains(&number_as_i64(v)?) => {
@@ -46,13 +35,9 @@ mod tests {
         let constraint = Enumeration { values: vec![1, 2] };
 
         let value = Value::Number(1.into());
-        assert!(constraint.verify().is_ok());
         assert!(constraint.validate(&value).is_ok());
 
         let value = Value::Number(3.into());
         assert!(constraint.validate(&value).is_err());
-
-        let constraint = Enumeration { values: vec![] };
-        assert!(constraint.verify().is_err());
     }
 }

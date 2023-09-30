@@ -11,17 +11,6 @@ pub struct Enumeration {
 }
 
 impl Constraint for Enumeration {
-    fn verify(&self) -> SchemaResult {
-        if self.values.is_empty() {
-            Err(SchemaError::Verify {
-                message: "Can not be empty".to_string(),
-                constraint_name: "Enum of Float".to_string(),
-            })
-        } else {
-            Ok(())
-        }
-    }
-
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Number(v) if !self.values.contains(&number_as_f64(v)?) => {
@@ -48,13 +37,9 @@ mod tests {
         };
 
         let value = Value::Number(Number::from_f64(1.1).unwrap());
-        assert!(constraint.verify().is_ok());
         assert!(constraint.validate(&value).is_ok());
 
         let value = Value::Number(Number::from_f64(3.0).unwrap());
         assert!(constraint.validate(&value).is_err());
-
-        let constraint = Enumeration { values: vec![] };
-        assert!(constraint.verify().is_err());
     }
 }

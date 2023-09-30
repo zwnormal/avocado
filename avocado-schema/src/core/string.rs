@@ -14,9 +14,9 @@ pub struct StringField {
     pub title: String,
     #[serde(flatten)]
     pub enumeration: Option<Enumeration>,
-    #[serde(flatten)]
+    #[serde(rename = "maxLength")]
     pub max_length: Option<MaxLength>,
-    #[serde(flatten)]
+    #[serde(rename = "minLength")]
     pub min_length: Option<MinLength>,
     pub pattern: Option<Pattern>,
 }

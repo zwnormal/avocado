@@ -11,10 +11,6 @@ pub struct Type {
 }
 
 impl Constraint for Type {
-    fn verify(&self) -> SchemaResult {
-        Ok(())
-    }
-
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Bool(_) if matches!(self.typed, FieldType::Boolean) => Ok(()),
@@ -49,7 +45,6 @@ mod tests {
         };
 
         let value = Value::Bool(true);
-        assert!(constraint.verify().is_ok());
         assert!(constraint.validate(&value).is_ok());
 
         let value = Value::String("Test".to_string());

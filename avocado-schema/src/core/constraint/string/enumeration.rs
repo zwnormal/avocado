@@ -10,17 +10,6 @@ pub struct Enumeration {
 }
 
 impl Constraint for Enumeration {
-    fn verify(&self) -> SchemaResult {
-        if self.values.is_empty() {
-            Err(SchemaError::Verify {
-                message: "Can not be empty".to_string(),
-                constraint_name: "Enum of String".to_string(),
-            })
-        } else {
-            Ok(())
-        }
-    }
-
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::String(v) if !self.values.contains(v) => Err(SchemaError::Verification {
@@ -45,13 +34,9 @@ mod tests {
         };
 
         let value = Value::String("China".to_string());
-        assert!(constraint.verify().is_ok());
         assert!(constraint.validate(&value).is_ok());
 
         let value = Value::String("United States".to_string());
         assert!(constraint.validate(&value).is_err());
-
-        let constraint = Enumeration { values: vec![] };
-        assert!(constraint.verify().is_err());
     }
 }
