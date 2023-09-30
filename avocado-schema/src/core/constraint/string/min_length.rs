@@ -17,7 +17,13 @@ impl Constraint for MinLength {
 
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::String(v) if v.graphemes(true).count() < self.min_length as usize => {
+            Value::String(v)
+                if v.graphemes(true).count()
+                    < usize::try_from(self.min_length).map_err(|_| SchemaError::Verify {
+                        message: "The min length is too large".to_string(),
+                        constraint_name: "MinLength".to_string(),
+                    })? =>
+            {
                 Err(SchemaError::Verification {
                     message: format!("The length of {} is less then {}", v, self.min_length),
                     constraint_name: "MinLength".to_string(),
