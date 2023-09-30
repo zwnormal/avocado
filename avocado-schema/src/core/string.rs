@@ -1,5 +1,4 @@
 use crate::base::field::{Field, FieldType};
-use crate::base::visitor::Visitor as FieldVisitor;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::string::enumeration::Enumeration;
 use crate::core::constraint::string::max_length::MaxLength;
@@ -21,7 +20,6 @@ pub struct StringField {
     pub pattern: Option<Pattern>,
 }
 
-#[typetag::serde(name = "string")]
 impl Field for StringField {
     fn name(&self) -> String {
         self.name.clone()
@@ -49,15 +47,10 @@ impl Field for StringField {
         }
         constraints
     }
-
-    fn accept(&self, mut visitor: Box<dyn FieldVisitor>) {
-        visitor.visit_string(self);
-    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::base::field::Field;
     use crate::core::constraint::string::enumeration::Enumeration;
     use crate::core::constraint::string::max_length::MaxLength;
     use crate::core::constraint::string::min_length::MinLength;
@@ -83,13 +76,6 @@ mod tests {
         assert_eq!(
             field_json,
             r#"{"name":"body","title":"Body","enum":["meeting","email"],"maxLength":32,"minLength":8,"pattern":"[a-z]+"}"#
-        );
-
-        let dyn_field: &dyn Field = &field;
-        let dyn_field_json = serde_json::to_string(&dyn_field).unwrap();
-        assert_eq!(
-            dyn_field_json,
-            r#"{"type":"string","name":"body","title":"Body","enum":["meeting","email"],"maxLength":32,"minLength":8,"pattern":"[a-z]+"}"#
         );
     }
 

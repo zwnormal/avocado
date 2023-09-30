@@ -1,5 +1,4 @@
 use crate::base::field::{Field, FieldType};
-use crate::base::visitor::Visitor as FieldVisitor;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::float::enumeration::Enumeration;
 use crate::core::constraint::float::exclusive_maximum::ExclusiveMaximum;
@@ -25,7 +24,6 @@ pub struct FloatField {
     pub exclusive_minimum: Option<ExclusiveMinimum>,
 }
 
-#[typetag::serde(name = "float")]
 impl Field for FloatField {
     fn name(&self) -> String {
         self.name.clone()
@@ -55,9 +53,5 @@ impl Field for FloatField {
             constraints.push(Box::new(self.exclusive_minimum.as_ref().unwrap().clone()))
         }
         constraints
-    }
-
-    fn accept(&self, mut visitor: Box<dyn FieldVisitor>) {
-        visitor.visit_float(self);
     }
 }

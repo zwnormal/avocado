@@ -1,14 +1,10 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::FieldEnum;
 use crate::base::visitor::Visitor;
 use crate::base::SchemaError;
-use crate::core::array::ArrayField;
-use crate::core::boolean::BooleanField;
-use crate::core::float::FloatField;
-use crate::core::integer::IntegerField;
-use crate::core::object::ObjectField;
-use crate::core::string::StringField;
 use serde_json::Value;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 #[derive(Debug)]
 pub struct Validator {
@@ -40,51 +36,79 @@ impl Validator {
 }
 
 impl Visitor for Validator {
-    fn visit_array(&mut self, array: &ArrayField) {
-        self.field_names.push(array.name.clone());
-        self.validate(array);
-        match self.value.clone() {
-            Value::Array(values) => {
-                for value in values {
-                    self.value = value.clone();
-                    self.validate(&*array.item);
+    fn visit(&mut self, field: Arc<FieldEnum>) {
+        match field.as_ref() {
+            FieldEnum::Array(f) => {
+                self.field_names.push(f.name.clone());
+                self.validate(f);
+                match self.value.clone() {
+                    Value::Array(values) => {
+                        for value in values {
+                            self.value = value;
+                            self.visit(f.item.clone());
+                        }
+                    }
+                    _ => {
+                        self.report_error(SchemaError::Validation {
+                            message: format!(
+                                "The value {} is not type {}",
+                                self.value,
+                                FieldType::Array
+                            ),
+                            constraint_name: "Type".to_string(),
+                        });
+                    }
                 }
+                self.field_names.pop();
             }
-            _ => {
-                self.report_error(SchemaError::Validation {
-                    message: format!("The value {} is not type {}", self.value, FieldType::Array),
-                    constraint_name: "Type".to_string(),
-                });
+            FieldEnum::Boolean(f) => {
+                self.field_names.push(f.name.clone());
+                self.validate(f);
+                self.field_names.pop();
+            }
+            FieldEnum::Float(f) => {
+                self.field_names.push(f.name.clone());
+                self.validate(f);
+                self.field_names.pop();
+            }
+            FieldEnum::Integer(f) => {
+                self.field_names.push(f.name.clone());
+                self.validate(f);
+                self.field_names.pop();
+            }
+            FieldEnum::Object(f) => {
+                self.field_names.push(f.name.clone());
+                self.validate(f);
+                match self.value.clone() {
+                    Value::Object(o) => {
+                        for (name, value) in o {
+                            match f.properties.get(name.as_str()) {
+                                Some(field) => {
+                                    self.value = value;
+                                    self.visit(field.clone());
+                                }
+                                None => {}
+                            };
+                        }
+                    }
+                    _ => {
+                        self.report_error(SchemaError::Validation {
+                            message: format!(
+                                "The value {} is not type {}",
+                                self.value,
+                                FieldType::Object
+                            ),
+                            constraint_name: "Type".to_string(),
+                        });
+                    }
+                }
+                self.field_names.pop();
+            }
+            FieldEnum::String(f) => {
+                self.field_names.push(f.name.clone());
+                self.validate(f);
+                self.field_names.pop();
             }
         }
-        self.field_names.pop();
-    }
-
-    fn visit_boolean(&mut self, boolean: &BooleanField) {
-        self.field_names.push(boolean.name.clone());
-        self.validate(boolean);
-        self.field_names.pop();
-    }
-
-    fn visit_float(&mut self, float: &FloatField) {
-        self.field_names.push(float.name.clone());
-        self.validate(float);
-        self.field_names.pop();
-    }
-
-    fn visit_integer(&mut self, integer: &IntegerField) {
-        self.field_names.push(integer.name.clone());
-        self.validate(integer);
-        self.field_names.pop();
-    }
-
-    fn visit_object(&mut self, object: &ObjectField) {
-        todo!()
-    }
-
-    fn visit_string(&mut self, string: &StringField) {
-        self.field_names.push(string.name.clone());
-        self.validate(string);
-        self.field_names.pop();
     }
 }

@@ -1,20 +1,20 @@
 use crate::base::field::{Field, FieldType};
-use crate::base::visitor::Visitor as FieldVisitor;
+use crate::base::visitor::FieldEnum;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::object::required::Required;
 use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ObjectField {
     pub name: String,
     pub title: String,
-    pub properties: HashMap<String, Box<dyn Field>>,
+    pub properties: HashMap<String, Arc<FieldEnum>>,
     pub required: Option<Required>,
 }
 
-#[typetag::serde(name = "object")]
 impl Field for ObjectField {
     fn name(&self) -> String {
         self.name.clone()
@@ -33,8 +33,41 @@ impl Field for ObjectField {
         }
         constraints
     }
+}
 
-    fn accept(&self, mut visitor: Box<dyn FieldVisitor>) {
-        visitor.visit_object(self);
+#[cfg(test)]
+mod tests {
+    use crate::base::visitor::FieldEnum;
+    use crate::core::constraint::object::required::Required;
+    use crate::core::constraint::string::max_length::MaxLength;
+    use crate::core::constraint::string::min_length::MinLength;
+    use crate::core::constraint::string::pattern::Pattern;
+    use crate::core::object::ObjectField;
+    use crate::core::string::StringField;
+    use regex::Regex;
+    use std::collections::HashMap;
+    use std::sync::Arc;
+
+    #[test]
+    fn test_serialize() {
+        let field = ObjectField {
+            name: "client".to_string(),
+            title: "Client".to_string(),
+            properties: HashMap::from([(
+                "first_name".to_string(),
+                Arc::new(FieldEnum::String(StringField {
+                    name: "first_name".to_string(),
+                    title: "First Name".to_string(),
+                    enumeration: None,
+                    max_length: Some(MaxLength { max_length: 32 }),
+                    min_length: Some(MinLength { min_length: 4 }),
+                    pattern: Some(Pattern {
+                        pattern: Regex::new(r"[a-z]+").unwrap(),
+                    }),
+                })),
+            )]),
+            required: Some(Required { required: vec![] }),
+        };
+        print!("{}", serde_json::to_string(&field).unwrap());
     }
 }
