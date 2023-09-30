@@ -128,8 +128,8 @@ mod tests {
                     "type": "string",
                     "name": "first_name",
                     "title": "First Name",
-                    "maxLength": 32,
-                    "minLength": -3
+                    "maxLength": 0,
+                    "minLength": 8
                 },
                 "last_name": {
                     "type": "string",
@@ -151,6 +151,6 @@ mod tests {
             .get(0)
             .unwrap()
             .to_string()
-            .contains("The min length must be larger than 0"))
+            .contains("The max length is 0"))
     }
 }
