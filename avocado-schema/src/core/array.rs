@@ -1,15 +1,15 @@
 use crate::base::field::{Field, FieldType};
-use crate::base::visitor::FieldEnum;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(tag = "type", rename = "array")]
 pub struct ArrayField {
     pub name: String,
     pub title: String,
-    pub item: Arc<FieldEnum>,
+    pub item: Arc<crate::base::visitor::Field>,
 }
 
 impl Field for ArrayField {

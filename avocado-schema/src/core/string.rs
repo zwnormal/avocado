@@ -8,6 +8,7 @@ use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(tag = "type", rename = "string")]
 pub struct StringField {
     pub name: String,
     pub title: String,
@@ -75,7 +76,7 @@ mod tests {
         let field_json = serde_json::to_string(&field).unwrap();
         assert_eq!(
             field_json,
-            r#"{"name":"body","title":"Body","enum":["meeting","email"],"maxLength":32,"minLength":8,"pattern":"[a-z]+"}"#
+            r#"{"type":"string","name":"body","title":"Body","enum":["meeting","email"],"maxLength":32,"minLength":8,"pattern":"[a-z]+"}"#
         );
     }
 

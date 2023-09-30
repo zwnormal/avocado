@@ -9,6 +9,7 @@ use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(tag = "type", rename = "integer")]
 pub struct IntegerField {
     pub name: String,
     pub title: String,

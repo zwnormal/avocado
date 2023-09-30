@@ -4,6 +4,7 @@ use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(tag = "type", rename = "boolean")]
 pub struct BooleanField {
     pub name: String,
     pub title: String,

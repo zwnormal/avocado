@@ -1,7 +1,9 @@
 use crate::base::field::{Field, FieldType};
-use crate::base::visitor::FieldEnum;
+use crate::base::visitor::Field as FieldEnum;
 use crate::base::visitor::Visitor;
 use crate::base::SchemaError;
+use crate::core::array::ArrayField;
+use crate::core::object::ObjectField;
 use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -24,12 +26,55 @@ impl Validator {
     }
 
     fn validate(&mut self, field: &(impl Field + ?Sized)) {
+        self.field_names.push(field.name().clone());
         for constraint in field.constrains() {
             match constraint.validate(&self.value) {
                 Ok(_) => {}
                 Err(e) => {
                     self.report_error(e);
                 }
+            }
+        }
+        self.field_names.pop();
+    }
+
+    fn visit_array(&mut self, array: &ArrayField) {
+        self.validate(array);
+        match self.value.clone() {
+            Value::Array(values) => {
+                for value in values {
+                    self.value = value;
+                    self.visit(array.item.clone());
+                }
+            }
+            _ => {
+                self.report_error(SchemaError::Validation {
+                    message: format!("The value {} is not type {}", self.value, FieldType::Array),
+                    constraint_name: "Type".to_string(),
+                });
+            }
+        }
+    }
+
+    fn visit_object(&mut self, object: &ObjectField) {
+        self.validate(object);
+        match self.value.clone() {
+            Value::Object(o) => {
+                for (name, value) in o {
+                    match object.properties.get(name.as_str()) {
+                        Some(field) => {
+                            self.value = value;
+                            self.visit(field.clone());
+                        }
+                        None => {}
+                    };
+                }
+            }
+            _ => {
+                self.report_error(SchemaError::Validation {
+                    message: format!("The value {} is not type {}", self.value, FieldType::Object),
+                    constraint_name: "Type".to_string(),
+                });
             }
         }
     }
@@ -39,75 +84,22 @@ impl Visitor for Validator {
     fn visit(&mut self, field: Arc<FieldEnum>) {
         match field.as_ref() {
             FieldEnum::Array(f) => {
-                self.field_names.push(f.name.clone());
-                self.validate(f);
-                match self.value.clone() {
-                    Value::Array(values) => {
-                        for value in values {
-                            self.value = value;
-                            self.visit(f.item.clone());
-                        }
-                    }
-                    _ => {
-                        self.report_error(SchemaError::Validation {
-                            message: format!(
-                                "The value {} is not type {}",
-                                self.value,
-                                FieldType::Array
-                            ),
-                            constraint_name: "Type".to_string(),
-                        });
-                    }
-                }
-                self.field_names.pop();
+                self.visit_array(f);
             }
             FieldEnum::Boolean(f) => {
-                self.field_names.push(f.name.clone());
                 self.validate(f);
-                self.field_names.pop();
             }
             FieldEnum::Float(f) => {
-                self.field_names.push(f.name.clone());
                 self.validate(f);
-                self.field_names.pop();
             }
             FieldEnum::Integer(f) => {
-                self.field_names.push(f.name.clone());
                 self.validate(f);
-                self.field_names.pop();
             }
             FieldEnum::Object(f) => {
-                self.field_names.push(f.name.clone());
-                self.validate(f);
-                match self.value.clone() {
-                    Value::Object(o) => {
-                        for (name, value) in o {
-                            match f.properties.get(name.as_str()) {
-                                Some(field) => {
-                                    self.value = value;
-                                    self.visit(field.clone());
-                                }
-                                None => {}
-                            };
-                        }
-                    }
-                    _ => {
-                        self.report_error(SchemaError::Validation {
-                            message: format!(
-                                "The value {} is not type {}",
-                                self.value,
-                                FieldType::Object
-                            ),
-                            constraint_name: "Type".to_string(),
-                        });
-                    }
-                }
-                self.field_names.pop();
+                self.visit_object(f);
             }
             FieldEnum::String(f) => {
-                self.field_names.push(f.name.clone());
                 self.validate(f);
-                self.field_names.pop();
             }
         }
     }

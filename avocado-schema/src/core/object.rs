@@ -1,5 +1,4 @@
 use crate::base::field::{Field, FieldType};
-use crate::base::visitor::FieldEnum;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::object::required::Required;
 use crate::core::constraint::Constraint;
@@ -8,10 +7,11 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(tag = "type", rename = "object")]
 pub struct ObjectField {
     pub name: String,
     pub title: String,
-    pub properties: HashMap<String, Arc<FieldEnum>>,
+    pub properties: HashMap<String, Arc<crate::base::visitor::Field>>,
     pub required: Option<Required>,
 }
 
@@ -37,7 +37,7 @@ impl Field for ObjectField {
 
 #[cfg(test)]
 mod tests {
-    use crate::base::visitor::FieldEnum;
+    use crate::base::visitor::Field;
     use crate::core::constraint::object::required::Required;
     use crate::core::constraint::string::max_length::MaxLength;
     use crate::core::constraint::string::min_length::MinLength;
@@ -55,7 +55,7 @@ mod tests {
             title: "Client".to_string(),
             properties: HashMap::from([(
                 "first_name".to_string(),
-                Arc::new(FieldEnum::String(StringField {
+                Arc::new(Field::String(StringField {
                     name: "first_name".to_string(),
                     title: "First Name".to_string(),
                     enumeration: None,
