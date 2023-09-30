@@ -7,14 +7,14 @@ use unicode_segmentation::UnicodeSegmentation;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct MaxLength {
     #[serde(rename = "maxLength")]
-    pub max_length: u64,
+    pub max_length: i64,
 }
 
 impl Constraint for MaxLength {
     fn verify(&self) -> SchemaResult {
-        if self.max_length == 0 {
+        if self.max_length <= 0 {
             Err(SchemaError::Verify {
-                message: "The max length is 0".to_string(),
+                message: "The max length must be larger than 0".to_string(),
                 constraint_name: "MaxLength".to_string(),
             })
         } else {
@@ -24,7 +24,13 @@ impl Constraint for MaxLength {
 
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::String(v) if v.graphemes(true).count() > self.max_length as usize => {
+            Value::String(v)
+                if v.graphemes(true).count()
+                    > usize::try_from(self.max_length).map_err(|_| SchemaError::Verify {
+                        message: "The max length must be larger than 0".to_string(),
+                        constraint_name: "MaxLength".to_string(),
+                    })? =>
+            {
                 Err(SchemaError::Verification {
                     message: format!(
                         "The length of {} is larger then {}",

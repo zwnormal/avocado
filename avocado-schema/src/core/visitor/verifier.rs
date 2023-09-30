@@ -17,6 +17,13 @@ pub struct Verifier {
 }
 
 impl Verifier {
+    pub fn new() -> Self {
+        Self {
+            field_names: vec![],
+            errors: HashMap::new(),
+        }
+    }
+
     fn verify(&mut self, field: &(impl Field + ?Sized)) {
         for constraint in field.constrains() {
             match constraint.verify() {
@@ -73,5 +80,77 @@ impl Visitor for Verifier {
         self.field_names.push(string.name.clone());
         self.verify(string);
         self.field_names.pop();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::base::visitor::Visitor;
+    use crate::core::object::ObjectField;
+    use crate::core::visitor::verifier::Verifier;
+
+    #[test]
+    fn test_verify() {
+        let valid_schema_json = r#"
+        {
+            "type": "object",
+            "name": "client",
+            "title": "Client",
+            "properties": {
+                "first_name": {
+                    "type": "string",
+                    "name": "first_name",
+                    "title": "First Name",
+                    "maxLength": 32,
+                    "minLength": 8
+                },
+                "last_name": {
+                    "type": "string",
+                    "name": "last_name",
+                    "title": "Last Name",
+                    "maxLength": 32,
+                    "minLength": 8                    
+                }
+            }
+        }"#;
+        let valid_schema: ObjectField = serde_json::from_str(valid_schema_json).unwrap();
+        let mut verifier = Verifier::new();
+        verifier.visit_object(&valid_schema);
+        assert!(verifier.errors.is_empty());
+
+        let invalid_schema_json = r#"
+        {
+            "type": "object",
+            "name": "client",
+            "title": "Client",
+            "properties": {
+                "first_name": {
+                    "type": "string",
+                    "name": "first_name",
+                    "title": "First Name",
+                    "maxLength": 32,
+                    "minLength": -3
+                },
+                "last_name": {
+                    "type": "string",
+                    "name": "last_name",
+                    "title": "Last Name",
+                    "maxLength": 32,
+                    "minLength": 8                    
+                }
+            }
+        }"#;
+        let invalid_schema: ObjectField = serde_json::from_str(invalid_schema_json).unwrap();
+        let mut verifier = Verifier::new();
+        verifier.visit_object(&invalid_schema);
+        print!("{:?}", verifier.errors);
+        assert!(verifier
+            .errors
+            .get("client/first_name")
+            .unwrap()
+            .get(0)
+            .unwrap()
+            .to_string()
+            .contains("The min length must be larger than 0"))
     }
 }
