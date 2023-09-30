@@ -13,12 +13,10 @@ pub struct Minimum {
 impl Constraint for Minimum {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Number(v) if number_as_f64(v)? < self.min_val => {
-                Err(SchemaError::Verification {
-                    message: format!("The {} is less then {}", v, self.min_val),
-                    constraint_name: "Minimum".to_string(),
-                })
-            }
+            Value::Number(v) if number_as_f64(v)? < self.min_val => Err(SchemaError::Validation {
+                message: format!("The {} is less then {}", v, self.min_val),
+                constraint_name: "Minimum".to_string(),
+            }),
             _ => Ok(()),
         }
     }

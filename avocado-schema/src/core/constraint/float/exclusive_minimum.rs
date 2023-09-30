@@ -13,12 +13,10 @@ pub struct ExclusiveMinimum {
 impl Constraint for ExclusiveMinimum {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Number(v) if number_as_f64(v)? <= self.min_val => {
-                Err(SchemaError::Verification {
-                    message: format!("The {} is less then or equals to {}", v, self.min_val),
-                    constraint_name: "ExclusiveMinimum".to_string(),
-                })
-            }
+            Value::Number(v) if number_as_f64(v)? <= self.min_val => Err(SchemaError::Validation {
+                message: format!("The {} is less then or equals to {}", v, self.min_val),
+                constraint_name: "ExclusiveMinimum".to_string(),
+            }),
             _ => Ok(()),
         }
     }

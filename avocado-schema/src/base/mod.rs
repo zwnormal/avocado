@@ -3,13 +3,8 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum SchemaError {
-    #[error("{message} ({constraint_name}")]
-    Verify {
-        message: String,
-        constraint_name: String,
-    },
     #[error("{message} ({constraint_name})")]
-    Verification {
+    Validation {
         message: String,
         constraint_name: String,
     },

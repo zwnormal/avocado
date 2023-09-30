@@ -26,7 +26,7 @@ impl Constraint for Required {
                 }
 
                 if !missing_fields.is_empty() {
-                    Err(SchemaError::Verification {
+                    Err(SchemaError::Validation {
                         message: format!("[{}] field(s) are required", missing_fields.join(", ")),
                         constraint_name: "Required".to_string(),
                     })

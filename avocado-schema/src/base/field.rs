@@ -83,12 +83,12 @@ pub trait Field: Debug {
 
 pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {
     if value.is_i64() || value.is_u64() {
-        value.as_i64().ok_or(SchemaError::Verification {
+        value.as_i64().ok_or(SchemaError::Validation {
             message: format!("The value {} is not 64-bit signed integer", value),
             constraint_name: "Type".to_string(),
         })
     } else {
-        Err(SchemaError::Verification {
+        Err(SchemaError::Validation {
             message: format!(
                 "The value {} is {}, not {}",
                 value,
@@ -102,12 +102,12 @@ pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {
 
 pub(crate) fn number_as_f64(value: &Number) -> Result<f64, SchemaError> {
     if value.is_f64() {
-        value.as_f64().ok_or(SchemaError::Verification {
+        value.as_f64().ok_or(SchemaError::Validation {
             message: format!("The value {} is not 64-bit float", value),
             constraint_name: "Type".to_string(),
         })
     } else {
-        Err(SchemaError::Verification {
+        Err(SchemaError::Validation {
             message: format!(
                 "The value {} is {}, not {}",
                 value,

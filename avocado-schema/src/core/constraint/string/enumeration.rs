@@ -12,7 +12,7 @@ pub struct Enumeration {
 impl Constraint for Enumeration {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::String(v) if !self.values.contains(v) => Err(SchemaError::Verification {
+            Value::String(v) if !self.values.contains(v) => Err(SchemaError::Validation {
                 message: format!("The string {} is not valid value", v),
                 constraint_name: "Enum of String".to_string(),
             }),

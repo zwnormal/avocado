@@ -54,7 +54,7 @@ impl Constraint for Pattern {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::String(v) if !self.pattern.is_match(v.as_str()) => {
-                Err(SchemaError::Verification {
+                Err(SchemaError::Validation {
                     message: format!("{} does not match pattern {}", self.pattern, v),
                     constraint_name: "Pattern".to_string(),
                 })

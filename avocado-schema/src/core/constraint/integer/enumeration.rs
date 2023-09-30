@@ -14,7 +14,7 @@ impl Constraint for Enumeration {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Number(v) if !self.values.contains(&number_as_i64(v)?) => {
-                Err(SchemaError::Verification {
+                Err(SchemaError::Validation {
                     message: format!("The integer {} is not valid value", v),
                     constraint_name: "Enum of Integer".to_string(),
                 })

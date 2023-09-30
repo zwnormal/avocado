@@ -23,7 +23,7 @@ impl Constraint for Type {
             Value::String(_) if matches!(self.typed, FieldType::String) => Ok(()),
             Value::Array(_) if matches!(self.typed, FieldType::Array) => Ok(()),
             Value::Null => Ok(()),
-            _ => Err(SchemaError::Verification {
+            _ => Err(SchemaError::Validation {
                 message: format!("The value {} is not type {}", val, self.typed),
                 constraint_name: "Type".to_string(),
             }),

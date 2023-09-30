@@ -54,14 +54,8 @@ impl<'de> Visitor<'de> for MaxLengthVisitor {
 impl Constraint for MaxLength {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::String(v)
-                if v.graphemes(true).count()
-                    > usize::try_from(self.max_length).map_err(|_| SchemaError::Verify {
-                        message: "The max length is too larger".to_string(),
-                        constraint_name: "MaxLength".to_string(),
-                    })? =>
-            {
-                Err(SchemaError::Verification {
+            Value::String(v) if v.graphemes(true).count() > self.max_length => {
+                Err(SchemaError::Validation {
                     message: format!(
                         "The length of {} is larger then {}",
                         v,

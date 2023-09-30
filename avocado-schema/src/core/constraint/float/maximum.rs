@@ -13,12 +13,10 @@ pub struct Maximum {
 impl Constraint for Maximum {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Number(v) if number_as_f64(v)? > self.max_val => {
-                Err(SchemaError::Verification {
-                    message: format!("The {} is larger then {}", v, self.max_val),
-                    constraint_name: "Maximum".to_string(),
-                })
-            }
+            Value::Number(v) if number_as_f64(v)? > self.max_val => Err(SchemaError::Validation {
+                message: format!("The {} is larger then {}", v, self.max_val),
+                constraint_name: "Maximum".to_string(),
+            }),
             _ => Ok(()),
         }
     }
