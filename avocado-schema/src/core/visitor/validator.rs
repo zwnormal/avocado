@@ -48,10 +48,7 @@ impl Validator {
                 }
             }
             _ => {
-                self.report_error(SchemaError::Validation {
-                    message: format!("The value {} is not type {}", self.value, FieldType::Array),
-                    constraint_name: "Type".to_string(),
-                });
+                // The error should have been reported
             }
         }
     }
@@ -71,10 +68,7 @@ impl Validator {
                 }
             }
             _ => {
-                self.report_error(SchemaError::Validation {
-                    message: format!("The value {} is not type {}", self.value, FieldType::Object),
-                    constraint_name: "Type".to_string(),
-                });
+                // The error should have been reported
             }
         }
     }
