@@ -25,7 +25,8 @@ mod tests {
                     "name": "last_name",
                     "title": "Last Name",
                     "maxLength": 32,
-                    "minLength": 8                    
+                    "minLength": 8,
+                    "pattern": "[a-zA-Z]+"
                 }
             }
         }"#;
@@ -49,7 +50,7 @@ mod tests {
                     "name": "last_name",
                     "title": "Last Name",
                     "maxLength": 32,
-                    "minLength": 8                    
+                    "minLength": 8
                 }
             }
         }"#;
