@@ -56,3 +56,71 @@ impl Field for FloatField {
         constraints
     }
 }
+
+#[derive(Default)]
+pub struct FloatFieldBuilder {
+    name: String,
+    title: String,
+    enumeration: Option<Vec<f64>>,
+    maximum: Option<f64>,
+    exclusive_maximum: Option<f64>,
+    minimum: Option<f64>,
+    exclusive_minimum: Option<f64>,
+}
+
+impl FloatFieldBuilder {
+    pub fn new() -> Self {
+        FloatFieldBuilder::default()
+    }
+
+    pub fn name(mut self, name: &'static str) -> Self {
+        self.name = name.to_string();
+        self
+    }
+
+    pub fn title(mut self, title: &'static str) -> Self {
+        self.title = title.to_string();
+        self
+    }
+
+    pub fn enumeration(mut self, numbers: Vec<f64>) -> Self {
+        self.enumeration = Some(numbers);
+        self
+    }
+
+    pub fn maximum(mut self, max: f64) -> Self {
+        self.maximum = Some(max);
+        self
+    }
+
+    pub fn exclusive_maximum(mut self, max: f64) -> Self {
+        self.exclusive_maximum = Some(max);
+        self
+    }
+
+    pub fn minimum(mut self, min: f64) -> Self {
+        self.minimum = Some(min);
+        self
+    }
+
+    pub fn exclusive_minimum(mut self, min: f64) -> Self {
+        self.exclusive_minimum = Some(min);
+        self
+    }
+
+    pub fn build(self) -> FloatField {
+        FloatField {
+            name: self.name,
+            title: self.title,
+            enumeration: self.enumeration.map(|values| Enumeration { values }),
+            maximum: self.maximum.map(|max_val| Maximum { max_val }),
+            exclusive_maximum: self
+                .exclusive_maximum
+                .map(|max_val| ExclusiveMaximum { max_val }),
+            minimum: self.minimum.map(|min_val| Minimum { min_val }),
+            exclusive_minimum: self
+                .exclusive_minimum
+                .map(|min_val| ExclusiveMinimum { min_val }),
+        }
+    }
+}

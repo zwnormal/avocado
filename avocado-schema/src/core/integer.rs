@@ -56,3 +56,71 @@ impl Field for IntegerField {
         constraints
     }
 }
+
+#[derive(Default)]
+pub struct IntegerFieldBuilder {
+    name: String,
+    title: String,
+    enumeration: Option<Vec<i64>>,
+    maximum: Option<i64>,
+    exclusive_maximum: Option<i64>,
+    minimum: Option<i64>,
+    exclusive_minimum: Option<i64>,
+}
+
+impl IntegerFieldBuilder {
+    pub fn new() -> Self {
+        IntegerFieldBuilder::default()
+    }
+
+    pub fn name(mut self, name: &'static str) -> Self {
+        self.name = name.to_string();
+        self
+    }
+
+    pub fn title(mut self, title: &'static str) -> Self {
+        self.title = title.to_string();
+        self
+    }
+
+    pub fn enumeration(mut self, numbers: Vec<i64>) -> Self {
+        self.enumeration = Some(numbers);
+        self
+    }
+
+    pub fn maximum(mut self, max: i64) -> Self {
+        self.maximum = Some(max);
+        self
+    }
+
+    pub fn exclusive_maximum(mut self, max: i64) -> Self {
+        self.exclusive_maximum = Some(max);
+        self
+    }
+
+    pub fn minimum(mut self, min: i64) -> Self {
+        self.minimum = Some(min);
+        self
+    }
+
+    pub fn exclusive_minimum(mut self, min: i64) -> Self {
+        self.exclusive_minimum = Some(min);
+        self
+    }
+
+    pub fn build(self) -> IntegerField {
+        IntegerField {
+            name: self.name,
+            title: self.title,
+            enumeration: self.enumeration.map(|values| Enumeration { values }),
+            maximum: self.maximum.map(|max_val| Maximum { max_val }),
+            exclusive_maximum: self
+                .exclusive_maximum
+                .map(|max_val| ExclusiveMaximum { max_val }),
+            minimum: self.minimum.map(|min_val| Minimum { min_val }),
+            exclusive_minimum: self
+                .exclusive_minimum
+                .map(|min_val| ExclusiveMinimum { min_val }),
+        }
+    }
+}
