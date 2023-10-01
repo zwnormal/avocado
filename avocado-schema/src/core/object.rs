@@ -35,39 +35,45 @@ impl Field for ObjectField {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::base::visitor::Field;
-    use crate::core::constraint::object::required::Required;
-    use crate::core::constraint::string::max_length::MaxLength;
-    use crate::core::constraint::string::min_length::MinLength;
-    use crate::core::constraint::string::pattern::Pattern;
-    use crate::core::object::ObjectField;
-    use crate::core::string::StringField;
-    use regex::Regex;
-    use std::collections::HashMap;
-    use std::sync::Arc;
+#[derive(Default)]
+pub struct ObjectFieldBuilder {
+    name: String,
+    title: String,
+    properties: HashMap<String, Arc<crate::base::visitor::Field>>,
+    required: Option<Vec<String>>,
+}
 
-    #[test]
-    fn test_serialize() {
-        let field = ObjectField {
-            name: "client".to_string(),
-            title: "Client".to_string(),
-            properties: HashMap::from([(
-                "first_name".to_string(),
-                Arc::new(Field::String(StringField {
-                    name: "first_name".to_string(),
-                    title: "First Name".to_string(),
-                    enumeration: None,
-                    max_length: Some(MaxLength { max_length: 32 }),
-                    min_length: Some(MinLength { min_length: 4 }),
-                    pattern: Some(Pattern {
-                        pattern: Regex::new(r"[a-z]+").unwrap(),
-                    }),
-                })),
-            )]),
-            required: Some(Required { required: vec![] }),
-        };
-        print!("{}", serde_json::to_string(&field).unwrap());
+impl ObjectFieldBuilder {
+    pub fn new() -> Self {
+        ObjectFieldBuilder::default()
+    }
+
+    pub fn name(mut self, name: &'static str) -> Self {
+        self.name = name.to_string();
+        self
+    }
+
+    pub fn title(mut self, title: &'static str) -> Self {
+        self.title = title.to_string();
+        self
+    }
+
+    pub fn property(mut self, name: &'static str, field: crate::base::visitor::Field) -> Self {
+        self.properties.insert(name.to_string(), Arc::new(field));
+        self
+    }
+
+    pub fn required(mut self, names: Vec<String>) -> Self {
+        self.required = Some(names);
+        self
+    }
+
+    pub fn build(self) -> ObjectField {
+        ObjectField {
+            name: self.name,
+            title: self.title,
+            properties: self.properties,
+            required: self.required.map(|required| Required { required }),
+        }
     }
 }
