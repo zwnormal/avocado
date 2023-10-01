@@ -1,4 +1,3 @@
-use crate::base::field::number_as_i64;
 use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
@@ -13,7 +12,7 @@ pub struct Enumeration {
 impl Constraint for Enumeration {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Number(v) if !self.values.contains(&number_as_i64(v)?) => {
+            Value::Number(v) if v.is_i64() && !self.values.contains(&v.as_i64().unwrap()) => {
                 Err(SchemaError::Validation {
                     message: format!("The integer {} is not valid value", v),
                     constraint_name: "Enum of Integer".to_string(),

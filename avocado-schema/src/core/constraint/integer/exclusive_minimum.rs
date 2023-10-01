@@ -1,4 +1,3 @@
-use crate::base::field::number_as_i64;
 use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
@@ -13,10 +12,12 @@ pub struct ExclusiveMinimum {
 impl Constraint for ExclusiveMinimum {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
-            Value::Number(v) if number_as_i64(v)? <= self.min_val => Err(SchemaError::Validation {
-                message: format!("The {} is less then or equals to {}", v, self.min_val),
-                constraint_name: "ExclusiveMinimum".to_string(),
-            }),
+            Value::Number(v) if v.is_i64() && (v.as_i64().unwrap() <= self.min_val) => {
+                Err(SchemaError::Validation {
+                    message: format!("The {} is less then or equals to {}", v, self.min_val),
+                    constraint_name: "ExclusiveMinimum".to_string(),
+                })
+            }
             _ => Ok(()),
         }
     }

@@ -14,11 +14,7 @@ impl Constraint for Type {
     fn validate(&self, val: &Value) -> SchemaResult {
         match val {
             Value::Bool(_) if matches!(self.typed, FieldType::Boolean) => Ok(()),
-            Value::Number(n)
-                if matches!(self.typed, FieldType::Integer) && (n.is_i64() || n.is_u64()) =>
-            {
-                Ok(())
-            }
+            Value::Number(n) if matches!(self.typed, FieldType::Integer) && n.is_i64() => Ok(()),
             Value::Number(n) if matches!(self.typed, FieldType::Float) && n.is_f64() => Ok(()),
             Value::String(_) if matches!(self.typed, FieldType::String) => Ok(()),
             Value::Array(_) if matches!(self.typed, FieldType::Array) => Ok(()),

@@ -1,8 +1,6 @@
-use crate::base::SchemaError;
 use crate::core::constraint::Constraint;
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
-use serde_json::Number;
 use std::fmt;
 use std::fmt::{Debug, Formatter};
 
@@ -76,42 +74,4 @@ pub trait Field: Debug {
     fn name(&self) -> String;
     fn title(&self) -> String;
     fn constrains(&self) -> Vec<Box<dyn Constraint>>;
-}
-
-pub(crate) fn number_as_i64(value: &Number) -> Result<i64, SchemaError> {
-    if value.is_i64() || value.is_u64() {
-        value.as_i64().ok_or(SchemaError::Validation {
-            message: format!("The value {} is not 64-bit signed integer", value),
-            constraint_name: "Type".to_string(),
-        })
-    } else {
-        Err(SchemaError::Validation {
-            message: format!(
-                "The value {} is {}, not {}",
-                value,
-                FieldType::Float,
-                FieldType::Integer
-            ),
-            constraint_name: "Type".to_string(),
-        })
-    }
-}
-
-pub(crate) fn number_as_f64(value: &Number) -> Result<f64, SchemaError> {
-    if value.is_f64() {
-        value.as_f64().ok_or(SchemaError::Validation {
-            message: format!("The value {} is not 64-bit float", value),
-            constraint_name: "Type".to_string(),
-        })
-    } else {
-        Err(SchemaError::Validation {
-            message: format!(
-                "The value {} is {}, not {}",
-                value,
-                FieldType::Integer,
-                FieldType::Float
-            ),
-            constraint_name: "Type".to_string(),
-        })
-    }
 }
