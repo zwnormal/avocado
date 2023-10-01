@@ -26,6 +26,10 @@ impl Field for ArrayField {
         FieldType::Array
     }
 
+    fn into_enum(self) -> crate::base::visitor::Field {
+        crate::base::visitor::Field::Array(self)
+    }
+
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
         vec![Box::new(Type {
             typed: FieldType::Array,
@@ -55,8 +59,8 @@ impl ArrayFieldBuilder {
         self
     }
 
-    pub fn item(mut self, item: crate::base::visitor::Field) -> Self {
-        self.item = Some(item);
+    pub fn item(mut self, item: impl Field) -> Self {
+        self.item = Some(item.into_enum());
         self
     }
 

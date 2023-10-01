@@ -28,6 +28,10 @@ impl Field for ObjectField {
         FieldType::Object
     }
 
+    fn into_enum(self) -> crate::base::visitor::Field {
+        crate::base::visitor::Field::Object(self)
+    }
+
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
         let mut constraints: Vec<Box<dyn Constraint>> = vec![Box::new(Type {
             typed: FieldType::Object,
@@ -62,8 +66,9 @@ impl ObjectFieldBuilder {
         self
     }
 
-    pub fn property(mut self, name: &'static str, field: crate::base::visitor::Field) -> Self {
-        self.properties.insert(name.to_string(), Arc::new(field));
+    pub fn property(mut self, name: &'static str, field: impl Field) -> Self {
+        self.properties
+            .insert(name.to_string(), Arc::new(field.into_enum()));
         self
     }
 

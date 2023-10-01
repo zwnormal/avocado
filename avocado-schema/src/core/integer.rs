@@ -38,6 +38,10 @@ impl Field for IntegerField {
         FieldType::Integer
     }
 
+    fn into_enum(self) -> crate::base::visitor::Field {
+        crate::base::visitor::Field::Integer(self)
+    }
+
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
         let mut constraints: Vec<Box<dyn Constraint>> = vec![Box::new(Type {
             typed: FieldType::Integer,

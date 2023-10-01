@@ -38,6 +38,10 @@ impl Field for FloatField {
         FieldType::Float
     }
 
+    fn into_enum(self) -> crate::base::visitor::Field {
+        crate::base::visitor::Field::Float(self)
+    }
+
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
         let mut constraints: Vec<Box<dyn Constraint>> = vec![Box::new(Type {
             typed: FieldType::Float,

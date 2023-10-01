@@ -23,6 +23,10 @@ impl Field for BooleanField {
         FieldType::Boolean
     }
 
+    fn into_enum(self) -> crate::base::visitor::Field {
+        crate::base::visitor::Field::Boolean(self)
+    }
+
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
         vec![Box::new(Type {
             typed: FieldType::Boolean,

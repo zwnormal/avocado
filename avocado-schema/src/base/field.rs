@@ -74,5 +74,6 @@ pub trait Field: Debug {
     fn name(&self) -> String;
     fn title(&self) -> String;
     fn get_type(&self) -> FieldType;
+    fn into_enum(self) -> crate::base::visitor::Field;
     fn constrains(&self) -> Vec<Box<dyn Constraint>>;
 }
