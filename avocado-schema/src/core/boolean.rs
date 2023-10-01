@@ -19,6 +19,10 @@ impl Field for BooleanField {
         self.title.clone()
     }
 
+    fn get_type(&self) -> FieldType {
+        FieldType::Boolean
+    }
+
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
         vec![Box::new(Type {
             typed: FieldType::Boolean,

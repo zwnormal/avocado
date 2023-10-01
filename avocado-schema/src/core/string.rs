@@ -31,6 +31,10 @@ impl Field for StringField {
         self.title.clone()
     }
 
+    fn get_type(&self) -> FieldType {
+        FieldType::String
+    }
+
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
         let mut constraints: Vec<Box<dyn Constraint>> = vec![Box::new(Type {
             typed: FieldType::String,

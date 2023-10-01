@@ -24,6 +24,10 @@ impl Field for ObjectField {
         self.title.clone()
     }
 
+    fn get_type(&self) -> FieldType {
+        FieldType::Object
+    }
+
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
         let mut constraints: Vec<Box<dyn Constraint>> = vec![Box::new(Type {
             typed: FieldType::Object,

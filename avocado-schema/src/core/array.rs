@@ -22,6 +22,10 @@ impl Field for ArrayField {
         self.title.clone()
     }
 
+    fn get_type(&self) -> FieldType {
+        FieldType::Array
+    }
+
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
         vec![Box::new(Type {
             typed: FieldType::Array,

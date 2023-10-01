@@ -73,5 +73,6 @@ impl fmt::Display for FieldType {
 pub trait Field: Debug {
     fn name(&self) -> String;
     fn title(&self) -> String;
+    fn get_type(&self) -> FieldType;
     fn constrains(&self) -> Vec<Box<dyn Constraint>>;
 }
