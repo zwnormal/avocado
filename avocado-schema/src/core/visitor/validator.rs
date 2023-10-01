@@ -1,4 +1,4 @@
-use crate::base::field::{Field, FieldType};
+use crate::base::field::Field;
 use crate::base::visitor::Field as FieldEnum;
 use crate::base::visitor::Visitor;
 use crate::base::SchemaError;
@@ -40,35 +40,22 @@ impl Validator {
 
     fn visit_array(&mut self, array: &ArrayField) {
         self.validate(array);
-        match self.value.clone() {
-            Value::Array(values) => {
-                for value in values {
-                    self.value = value;
-                    self.visit(array.item.clone());
-                }
-            }
-            _ => {
-                // The error should have been reported
+        if let Value::Array(values) = self.value.clone() {
+            for value in values {
+                self.value = value;
+                self.visit(array.item.clone());
             }
         }
     }
 
     fn visit_object(&mut self, object: &ObjectField) {
         self.validate(object);
-        match self.value.clone() {
-            Value::Object(o) => {
-                for (name, value) in o {
-                    match object.properties.get(name.as_str()) {
-                        Some(field) => {
-                            self.value = value;
-                            self.visit(field.clone());
-                        }
-                        None => {}
-                    };
-                }
-            }
-            _ => {
-                // The error should have been reported
+        if let Value::Object(o) = self.value.clone() {
+            for (name, value) in o {
+                if let Some(field) = object.properties.get(name.as_str()) {
+                    self.value = value;
+                    self.visit(field.clone());
+                };
             }
         }
     }
