@@ -25,3 +25,32 @@ impl Field for BooleanField {
         })]
     }
 }
+
+#[derive(Default)]
+pub struct BooleanFieldBuilder {
+    name: String,
+    title: String,
+}
+
+impl BooleanFieldBuilder {
+    pub fn new() -> Self {
+        BooleanFieldBuilder::default()
+    }
+
+    pub fn name(mut self, name: &'static str) -> Self {
+        self.name = name.to_string();
+        self
+    }
+
+    pub fn title(mut self, title: &'static str) -> Self {
+        self.title = title.to_string();
+        self
+    }
+
+    pub fn build(self) -> BooleanField {
+        BooleanField {
+            name: self.name,
+            title: self.title,
+        }
+    }
+}

@@ -1,6 +1,7 @@
 use crate::base::field::{Field, FieldType};
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
@@ -25,5 +26,46 @@ impl Field for ArrayField {
         vec![Box::new(Type {
             typed: FieldType::Array,
         })]
+    }
+}
+
+#[derive(Default)]
+pub struct ArrayFieldBuilder {
+    name: String,
+    title: String,
+    item: Option<crate::base::visitor::Field>,
+}
+
+impl ArrayFieldBuilder {
+    pub fn new() -> ArrayFieldBuilder {
+        ArrayFieldBuilder::default()
+    }
+
+    pub fn name(mut self, name: &'static str) -> Self {
+        self.name = name.to_string();
+        self
+    }
+
+    pub fn title(mut self, title: &'static str) -> Self {
+        self.title = title.to_string();
+        self
+    }
+
+    pub fn item(mut self, item: crate::base::visitor::Field) -> Self {
+        self.item = Some(item);
+        self
+    }
+
+    pub fn build(self) -> Result<ArrayField> {
+        if let Some(item) = self.item {
+            let field = ArrayField {
+                name: self.name,
+                title: self.title,
+                item: Arc::new(item),
+            };
+            Ok(field)
+        } else {
+            Err(anyhow!("array field must specify item field"))
+        }
     }
 }
