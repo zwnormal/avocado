@@ -63,7 +63,7 @@ impl Validator {
 
     pub fn validate(
         value: &impl Serialize,
-        field: &(impl Field + ?Sized),
+        field: Arc<FieldEnum>,
     ) -> Result<(), HashMap<String, Vec<Error>>> {
         let mut validator = Validator {
             value: serde_json::to_value(value).map_err(|e| {
@@ -72,7 +72,7 @@ impl Validator {
             field_names: vec![],
             errors: Default::default(),
         };
-        validator.validate_field(field);
+        validator.visit(field);
         if validator.errors.is_empty() {
             Ok(())
         } else {
@@ -108,9 +108,11 @@ impl Visitor for Validator {
 
 #[cfg(test)]
 mod tests {
+    use crate::base::field::Field;
     use crate::core::object::ObjectField;
     use crate::core::visitor::validator::Validator;
     use serde::Serialize;
+    use std::sync::Arc;
 
     #[test]
     fn test_validate() {
@@ -151,12 +153,20 @@ mod tests {
             }
         }"#;
         let schema: ObjectField = serde_json::from_str(schema_json).unwrap();
+        let schema = Arc::new(schema.into_enum());
 
         let valid_client = Client {
             first_name: "Robert".to_string(),
             last_name: "Li".to_string(),
             age: 32,
         };
-        assert!(Validator::validate(&valid_client, &schema).is_ok())
+        assert!(Validator::validate(&valid_client, schema.clone()).is_ok());
+
+        let invalid_client = Client {
+            first_name: "Robert".to_string(),
+            last_name: "Li".to_string(),
+            age: 201,
+        };
+        assert!(Validator::validate(&invalid_client, schema.clone()).is_err());
     }
 }
