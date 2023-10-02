@@ -18,6 +18,7 @@ impl Constraint for Type {
             Value::Number(n) if matches!(self.typed, FieldType::Float) && n.is_f64() => Ok(()),
             Value::String(_) if matches!(self.typed, FieldType::String) => Ok(()),
             Value::Array(_) if matches!(self.typed, FieldType::Array) => Ok(()),
+            Value::Object(_) if matches!(self.typed, FieldType::Object) => Ok(()),
             Value::Null => Ok(()),
             _ => Err(anyhow!(format!(
                 "value {} is not type {} ({})",

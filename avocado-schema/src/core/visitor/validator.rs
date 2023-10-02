@@ -62,7 +62,7 @@ impl Validator {
     }
 
     pub fn validate(
-        value: impl Serialize,
+        value: &impl Serialize,
         field: &(impl Field + ?Sized),
     ) -> Result<(), HashMap<String, Vec<Error>>> {
         let mut validator = Validator {
@@ -103,5 +103,60 @@ impl Visitor for Validator {
                 self.validate_field(f);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::core::object::ObjectField;
+    use crate::core::visitor::validator::Validator;
+    use serde::Serialize;
+
+    #[test]
+    fn test_validate() {
+        #[derive(Serialize)]
+        struct Client {
+            first_name: String,
+            last_name: String,
+            age: u64,
+        }
+
+        let schema_json = r#"
+        {
+            "type":"object",
+            "name": "client",
+            "title": "Client",
+            "properties": {
+                "first_name": {
+                    "type": "string",
+                    "name": "first_name",
+                    "title": "First Name",
+                    "max_length": 32,
+                    "min_length": 8
+                },
+                "last_name": {
+                    "type": "string",
+                    "name": "last_name",
+                    "title": "Last Name",
+                    "max_length": 32,
+                    "min_length": 8
+                },
+                "age": {
+                    "type": "integer",
+                    "name": "age",
+                    "title": "Age",
+                    "maximum": 200,
+                    "minimum": 0
+                }
+            }
+        }"#;
+        let schema: ObjectField = serde_json::from_str(schema_json).unwrap();
+
+        let valid_client = Client {
+            first_name: "Robert".to_string(),
+            last_name: "Li".to_string(),
+            age: 32,
+        };
+        assert!(Validator::validate(&valid_client, &schema).is_ok())
     }
 }
