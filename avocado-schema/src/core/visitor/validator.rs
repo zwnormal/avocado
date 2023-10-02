@@ -3,21 +3,36 @@ use crate::base::visitor::Field as FieldEnum;
 use crate::base::visitor::Visitor;
 use crate::core::array::ArrayField;
 use crate::core::object::ObjectField;
-use anyhow::{anyhow, Error, Result};
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::HashMap;
+use std::error::Error;
+use std::fmt::{Display, Formatter};
 use std::sync::Arc;
+
+#[derive(Clone, Debug)]
+pub struct ValidationError {
+    message: String,
+}
+
+impl Display for ValidationError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl Error for ValidationError {}
 
 #[derive(Debug)]
 pub struct Validator {
-    pub value: Value,
-    pub field_names: Vec<String>,
-    pub errors: HashMap<String, Vec<Error>>,
+    schema: Arc<crate::base::visitor::Field>,
+    value: Value,
+    field_names: Vec<String>,
+    errors: HashMap<String, Vec<ValidationError>>,
 }
 
 impl Validator {
-    fn report_error(&mut self, error: Error) {
+    fn report_error(&mut self, error: ValidationError) {
         let field = self.field_names.clone().join("/");
         if self.errors.contains_key(field.as_str()) {
             self.errors.get_mut(field.as_str()).unwrap().push(error);
@@ -32,7 +47,9 @@ impl Validator {
             match constraint.validate(&self.value) {
                 Ok(_) => {}
                 Err(e) => {
-                    self.report_error(anyhow!(e.to_string()));
+                    self.report_error(ValidationError {
+                        message: e.to_string(),
+                    });
                 }
             }
         }
@@ -61,22 +78,35 @@ impl Validator {
         }
     }
 
-    pub fn validate(
-        value: &impl Serialize,
-        field: Arc<FieldEnum>,
-    ) -> Result<(), HashMap<String, Vec<Error>>> {
-        let mut validator = Validator {
-            value: serde_json::to_value(value).map_err(|e| {
-                HashMap::from([("invalid value".to_string(), vec![anyhow!(e.to_string())])])
-            })?,
+    pub fn new(field: impl Field) -> Self {
+        Validator {
+            schema: Arc::new(field.into_enum()),
+            value: Default::default(),
             field_names: vec![],
             errors: Default::default(),
-        };
-        validator.visit(field);
-        if validator.errors.is_empty() {
+        }
+    }
+
+    pub fn validate(
+        &mut self,
+        value: &impl Serialize,
+    ) -> Result<(), HashMap<String, Vec<ValidationError>>> {
+        // Reset validator internal state
+        self.value = serde_json::to_value(value).map_err(|e| {
+            HashMap::from([(
+                "value".to_string(),
+                vec![ValidationError {
+                    message: e.to_string(),
+                }],
+            )])
+        })?;
+        self.field_names = vec![];
+        self.errors = Default::default();
+        self.visit(self.schema.clone());
+        if self.errors.is_empty() {
             Ok(())
         } else {
-            Err(validator.errors)
+            Err(self.errors.clone())
         }
     }
 }
@@ -108,11 +138,9 @@ impl Visitor for Validator {
 
 #[cfg(test)]
 mod tests {
-    use crate::base::field::Field;
     use crate::core::object::ObjectField;
     use crate::core::visitor::validator::Validator;
     use serde::Serialize;
-    use std::sync::Arc;
 
     #[test]
     fn test_validate() {
@@ -153,20 +181,20 @@ mod tests {
             }
         }"#;
         let schema: ObjectField = serde_json::from_str(schema_json).unwrap();
-        let schema = Arc::new(schema.into_enum());
+        let mut validator = Validator::new(schema);
 
         let valid_client = Client {
             first_name: "Robert".to_string(),
             last_name: "Li".to_string(),
             age: 32,
         };
-        assert!(Validator::validate(&valid_client, schema.clone()).is_ok());
+        assert!(validator.validate(&valid_client).is_ok());
 
         let invalid_client = Client {
             first_name: "Robert".to_string(),
             last_name: "Li".to_string(),
             age: 201,
         };
-        assert!(Validator::validate(&invalid_client, schema.clone()).is_err());
+        assert!(validator.validate(&invalid_client).is_err());
     }
 }
