@@ -183,6 +183,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "avocado-schema"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "regex",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "unicode-segmentation",
+ "uuid",
+]
+
+[[package]]
 name = "avocado-user"
 version = "0.1.0"
 dependencies = [
@@ -2083,19 +2096,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c3733bf4cf7ea0880754e19cb5a462007c4a8c1914bff372ccc95b464f1df88"
 dependencies = [
  "windows-sys",
-]
-
-[[package]]
-name = "schema_core"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "regex",
- "serde",
- "serde_json",
- "thiserror",
- "unicode-segmentation",
- "uuid",
 ]
 
 [[package]]
