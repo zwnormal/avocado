@@ -1,4 +1,5 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::FieldEnum;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::float::enumeration::Enumeration;
 use crate::core::constraint::float::exclusive_maximum::ExclusiveMaximum;
@@ -38,8 +39,8 @@ impl Field for FloatField {
         FieldType::Float
     }
 
-    fn into_enum(self) -> crate::base::visitor::Field {
-        crate::base::visitor::Field::Float(self)
+    fn into_enum(self) -> FieldEnum {
+        FieldEnum::Float(self)
     }
 
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {

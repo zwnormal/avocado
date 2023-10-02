@@ -10,7 +10,7 @@ use std::sync::Arc;
 
 #[derive(Debug, Deserialize)]
 #[serde(tag = "type", rename_all = "lowercase")]
-pub enum Field {
+pub enum FieldEnum {
     Array(ArrayField),
     Boolean(BooleanField),
     Float(FloatField),
@@ -19,22 +19,22 @@ pub enum Field {
     String(StringField),
 }
 
-impl Serialize for Field {
+impl Serialize for FieldEnum {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
         match self {
-            Field::Array(f) => f.serialize(serializer),
-            Field::Boolean(f) => f.serialize(serializer),
-            Field::Float(f) => f.serialize(serializer),
-            Field::Integer(f) => f.serialize(serializer),
-            Field::Object(f) => f.serialize(serializer),
-            Field::String(f) => f.serialize(serializer),
+            FieldEnum::Array(f) => f.serialize(serializer),
+            FieldEnum::Boolean(f) => f.serialize(serializer),
+            FieldEnum::Float(f) => f.serialize(serializer),
+            FieldEnum::Integer(f) => f.serialize(serializer),
+            FieldEnum::Object(f) => f.serialize(serializer),
+            FieldEnum::String(f) => f.serialize(serializer),
         }
     }
 }
 
 pub trait Visitor: Debug {
-    fn visit(&mut self, field: Arc<Field>);
+    fn visit(&mut self, field: Arc<FieldEnum>);
 }

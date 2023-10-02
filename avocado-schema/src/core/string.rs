@@ -1,4 +1,5 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::FieldEnum;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::string::enumeration::Enumeration;
 use crate::core::constraint::string::max_length::MaxLength;
@@ -35,8 +36,8 @@ impl Field for StringField {
         FieldType::String
     }
 
-    fn into_enum(self) -> crate::base::visitor::Field {
-        crate::base::visitor::Field::String(self)
+    fn into_enum(self) -> FieldEnum {
+        FieldEnum::String(self)
     }
 
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {

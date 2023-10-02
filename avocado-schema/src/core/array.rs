@@ -1,4 +1,5 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::FieldEnum;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::Constraint;
 use anyhow::{anyhow, Result};
@@ -10,7 +11,7 @@ use std::sync::Arc;
 pub struct ArrayField {
     pub name: String,
     pub title: String,
-    pub item: Arc<crate::base::visitor::Field>,
+    pub item: Arc<FieldEnum>,
 }
 
 impl Field for ArrayField {
@@ -26,8 +27,8 @@ impl Field for ArrayField {
         FieldType::Array
     }
 
-    fn into_enum(self) -> crate::base::visitor::Field {
-        crate::base::visitor::Field::Array(self)
+    fn into_enum(self) -> FieldEnum {
+        FieldEnum::Array(self)
     }
 
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
@@ -41,7 +42,7 @@ impl Field for ArrayField {
 pub struct ArrayFieldBuilder {
     name: String,
     title: String,
-    item: Option<crate::base::visitor::Field>,
+    item: Option<FieldEnum>,
 }
 
 impl ArrayFieldBuilder {

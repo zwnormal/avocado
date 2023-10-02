@@ -1,4 +1,5 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::FieldEnum;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::Constraint;
 use serde::{Deserialize, Serialize};
@@ -23,8 +24,8 @@ impl Field for BooleanField {
         FieldType::Boolean
     }
 
-    fn into_enum(self) -> crate::base::visitor::Field {
-        crate::base::visitor::Field::Boolean(self)
+    fn into_enum(self) -> FieldEnum {
+        FieldEnum::Boolean(self)
     }
 
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {

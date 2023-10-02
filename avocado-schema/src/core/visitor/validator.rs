@@ -1,5 +1,5 @@
 use crate::base::field::Field;
-use crate::base::visitor::Field as FieldEnum;
+use crate::base::visitor::FieldEnum;
 use crate::base::visitor::Visitor;
 use crate::core::array::ArrayField;
 use crate::core::object::ObjectField;
@@ -25,7 +25,7 @@ impl Error for ValidationError {}
 
 #[derive(Debug)]
 pub struct Validator {
-    schema: Arc<crate::base::visitor::Field>,
+    schema: Arc<FieldEnum>,
     value: Value,
     field_names: Vec<String>,
     errors: HashMap<String, Vec<ValidationError>>,

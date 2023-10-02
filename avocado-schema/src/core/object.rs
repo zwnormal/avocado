@@ -1,4 +1,5 @@
 use crate::base::field::{Field, FieldType};
+use crate::base::visitor::FieldEnum;
 use crate::core::constraint::common::typed::Type;
 use crate::core::constraint::object::required::Required;
 use crate::core::constraint::Constraint;
@@ -11,7 +12,7 @@ use std::sync::Arc;
 pub struct ObjectField {
     pub name: String,
     pub title: String,
-    pub properties: HashMap<String, Arc<crate::base::visitor::Field>>,
+    pub properties: HashMap<String, Arc<FieldEnum>>,
     pub required: Option<Required>,
 }
 
@@ -28,8 +29,8 @@ impl Field for ObjectField {
         FieldType::Object
     }
 
-    fn into_enum(self) -> crate::base::visitor::Field {
-        crate::base::visitor::Field::Object(self)
+    fn into_enum(self) -> FieldEnum {
+        FieldEnum::Object(self)
     }
 
     fn constrains(&self) -> Vec<Box<dyn Constraint>> {
@@ -47,7 +48,7 @@ impl Field for ObjectField {
 pub struct ObjectFieldBuilder {
     name: String,
     title: String,
-    properties: HashMap<String, Arc<crate::base::visitor::Field>>,
+    properties: HashMap<String, Arc<FieldEnum>>,
     required: Option<Vec<String>>,
 }
 
