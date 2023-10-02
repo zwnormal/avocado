@@ -63,7 +63,7 @@ impl Validator {
 
     pub fn validate(
         value: impl Serialize,
-        schema: &ObjectField,
+        field: impl Field,
     ) -> Result<(), HashMap<String, Vec<Error>>> {
         let mut validator = Validator {
             value: serde_json::to_value(value).map_err(|e| {
@@ -72,7 +72,7 @@ impl Validator {
             field_names: vec![],
             errors: Default::default(),
         };
-        validator.validate_field(schema);
+        validator.validate_field(&field);
         if validator.errors.is_empty() {
             Ok(())
         } else {
