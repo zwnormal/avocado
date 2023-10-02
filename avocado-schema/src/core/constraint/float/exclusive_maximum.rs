@@ -1,5 +1,5 @@
-use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -10,13 +10,13 @@ pub struct ExclusiveMaximum {
 }
 
 impl Constraint for ExclusiveMaximum {
-    fn validate(&self, val: &Value) -> SchemaResult {
+    fn validate(&self, val: &Value) -> Result<()> {
         match val {
             Value::Number(v) if v.is_f64() && (v.as_f64().unwrap() >= self.max_val) => {
-                Err(SchemaError::Validation {
-                    message: format!("The {} is larger then or equals to {}", v, self.max_val),
-                    constraint_name: "ExclusiveMaximum".to_string(),
-                })
+                Err(anyhow!(format!(
+                    "value {} is larger then or equals to {} {}",
+                    v, self.max_val, "ExclusiveMaximum"
+                )))
             }
             _ => Ok(()),
         }

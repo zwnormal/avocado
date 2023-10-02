@@ -1,5 +1,5 @@
-use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::Value;
@@ -48,13 +48,13 @@ impl<'de> Visitor<'de> for MinLengthVisitor {
 }
 
 impl Constraint for MinLength {
-    fn validate(&self, val: &Value) -> SchemaResult {
+    fn validate(&self, val: &Value) -> Result<()> {
         match val {
             Value::String(v) if v.graphemes(true).count() < self.min_length => {
-                Err(SchemaError::Validation {
-                    message: format!("The length of {} is less then {}", v, self.min_length),
-                    constraint_name: "MinLength".to_string(),
-                })
+                Err(anyhow!(format!(
+                    "length of {} is less then {} ({})",
+                    v, self.min_length, "MinLength"
+                )))
             }
             _ => Ok(()),
         }

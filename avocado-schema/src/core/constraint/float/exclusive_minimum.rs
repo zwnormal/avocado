@@ -1,5 +1,5 @@
-use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -10,13 +10,13 @@ pub struct ExclusiveMinimum {
 }
 
 impl Constraint for ExclusiveMinimum {
-    fn validate(&self, val: &Value) -> SchemaResult {
+    fn validate(&self, val: &Value) -> Result<()> {
         match val {
             Value::Number(v) if v.is_f64() && (v.as_f64().unwrap() <= self.min_val) => {
-                Err(SchemaError::Validation {
-                    message: format!("The {} is less then or equals to {}", v, self.min_val),
-                    constraint_name: "ExclusiveMinimum".to_string(),
-                })
+                Err(anyhow!(format!(
+                    "value {} is less then or equals to {} ({})",
+                    v, self.min_val, "ExclusiveMinimum"
+                )))
             }
             _ => Ok(()),
         }

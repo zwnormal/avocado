@@ -1,5 +1,5 @@
-use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::Value;
@@ -52,17 +52,15 @@ impl<'de> Visitor<'de> for MaxLengthVisitor {
 }
 
 impl Constraint for MaxLength {
-    fn validate(&self, val: &Value) -> SchemaResult {
+    fn validate(&self, val: &Value) -> Result<()> {
         match val {
             Value::String(v) if v.graphemes(true).count() > self.max_length => {
-                Err(SchemaError::Validation {
-                    message: format!(
-                        "The length of {} is larger then {}",
-                        v,
-                        v.graphemes(true).count()
-                    ),
-                    constraint_name: "MaxLength".to_string(),
-                })
+                Err(anyhow!(format!(
+                    "length of {} is larger then {} ({})",
+                    v,
+                    v.graphemes(true).count(),
+                    "MaxLength"
+                )))
             }
             _ => Ok(()),
         }

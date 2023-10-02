@@ -1,6 +1,6 @@
 use crate::base::field::FieldType;
-use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -11,7 +11,7 @@ pub struct Type {
 }
 
 impl Constraint for Type {
-    fn validate(&self, val: &Value) -> SchemaResult {
+    fn validate(&self, val: &Value) -> Result<()> {
         match val {
             Value::Bool(_) if matches!(self.typed, FieldType::Boolean) => Ok(()),
             Value::Number(n) if matches!(self.typed, FieldType::Integer) && n.is_i64() => Ok(()),
@@ -19,10 +19,10 @@ impl Constraint for Type {
             Value::String(_) if matches!(self.typed, FieldType::String) => Ok(()),
             Value::Array(_) if matches!(self.typed, FieldType::Array) => Ok(()),
             Value::Null => Ok(()),
-            _ => Err(SchemaError::Validation {
-                message: format!("The value {} is not type {}", val, self.typed),
-                constraint_name: "Type".to_string(),
-            }),
+            _ => Err(anyhow!(format!(
+                "value {} is not type {} ({})",
+                val, self.typed, "Type"
+            ))),
         }
     }
 }

@@ -1,5 +1,5 @@
-use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use regex::Regex;
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -51,14 +51,12 @@ impl<'de> Visitor<'de> for PatternVisitor {
 }
 
 impl Constraint for Pattern {
-    fn validate(&self, val: &Value) -> SchemaResult {
+    fn validate(&self, val: &Value) -> Result<()> {
         match val {
-            Value::String(v) if !self.pattern.is_match(v.as_str()) => {
-                Err(SchemaError::Validation {
-                    message: format!("{} does not match pattern {}", self.pattern, v),
-                    constraint_name: "Pattern".to_string(),
-                })
-            }
+            Value::String(v) if !self.pattern.is_match(v.as_str()) => Err(anyhow!(format!(
+                "{} does not match pattern {} ({})",
+                self.pattern, v, "Pattern"
+            ))),
             _ => Ok(()),
         }
     }

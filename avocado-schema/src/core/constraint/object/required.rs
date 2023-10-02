@@ -1,5 +1,5 @@
-use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -9,7 +9,7 @@ pub struct Required {
 }
 
 impl Constraint for Required {
-    fn validate(&self, val: &Value) -> SchemaResult {
+    fn validate(&self, val: &Value) -> Result<()> {
         match val {
             Value::Object(o) => {
                 let mut missing_fields = vec![];
@@ -26,10 +26,11 @@ impl Constraint for Required {
                 }
 
                 if !missing_fields.is_empty() {
-                    Err(SchemaError::Validation {
-                        message: format!("[{}] field(s) are required", missing_fields.join(", ")),
-                        constraint_name: "Required".to_string(),
-                    })
+                    Err(anyhow!(format!(
+                        "[{}] field(s) are required ({})",
+                        missing_fields.join(", "),
+                        "Required"
+                    )))
                 } else {
                     Ok(())
                 }

@@ -1,5 +1,5 @@
-use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -10,14 +10,11 @@ pub struct Minimum {
 }
 
 impl Constraint for Minimum {
-    fn validate(&self, val: &Value) -> SchemaResult {
+    fn validate(&self, val: &Value) -> Result<()> {
         match val {
-            Value::Number(v) if v.is_f64() && (v.as_f64().unwrap() < self.min_val) => {
-                Err(SchemaError::Validation {
-                    message: format!("The {} is less then {}", v, self.min_val),
-                    constraint_name: "Minimum".to_string(),
-                })
-            }
+            Value::Number(v) if v.is_f64() && (v.as_f64().unwrap() < self.min_val) => Err(anyhow!(
+                format!("value {} is less then {} ({})", v, self.min_val, "Minimum")
+            )),
             _ => Ok(()),
         }
     }

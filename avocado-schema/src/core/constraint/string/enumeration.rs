@@ -1,5 +1,5 @@
-use crate::base::{SchemaError, SchemaResult};
 use crate::core::constraint::Constraint;
+use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -10,12 +10,12 @@ pub struct Enumeration {
 }
 
 impl Constraint for Enumeration {
-    fn validate(&self, val: &Value) -> SchemaResult {
+    fn validate(&self, val: &Value) -> Result<()> {
         match val {
-            Value::String(v) if !self.values.contains(v) => Err(SchemaError::Validation {
-                message: format!("The string {} is not valid value", v),
-                constraint_name: "Enum of String".to_string(),
-            }),
+            Value::String(v) if !self.values.contains(v) => Err(anyhow!(format!(
+                "value {} is not valid value ({})",
+                v, "Enum of String"
+            ))),
             _ => Ok(()),
         }
     }
