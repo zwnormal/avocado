@@ -57,8 +57,8 @@ impl Validator {
     }
 
     fn visit_array(&mut self, array: &ArrayField) {
-        self.field_names.push(array.name().clone());
         self.validate_field(array);
+        self.field_names.push(array.name().clone());
         if let Value::Array(values) = self.value.clone() {
             for value in values {
                 self.value = value;
@@ -69,8 +69,8 @@ impl Validator {
     }
 
     fn visit_object(&mut self, object: &ObjectField) {
-        self.field_names.push(object.name().clone());
         self.validate_field(object);
+        self.field_names.push(object.name().clone());
         if let Value::Object(o) = self.value.clone() {
             for (name, value) in o {
                 if let Some(field) = object.properties.get(name.as_str()) {
