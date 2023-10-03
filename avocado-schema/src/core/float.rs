@@ -47,20 +47,20 @@ impl Field for FloatField {
         let mut constraints: Vec<Box<dyn Constraint>> = vec![Box::new(Type {
             typed: FieldType::Float,
         })];
-        if self.enumeration.is_some() {
-            constraints.push(Box::new(self.enumeration.as_ref().unwrap().clone()))
+        if let Some(c) = &self.enumeration {
+            constraints.push(Box::new(c.clone()))
         }
-        if self.maximum.is_some() {
-            constraints.push(Box::new(self.maximum.as_ref().unwrap().clone()))
+        if let Some(c) = &self.maximum {
+            constraints.push(Box::new(c.clone()))
         }
-        if self.exclusive_maximum.is_some() {
-            constraints.push(Box::new(self.exclusive_maximum.as_ref().unwrap().clone()))
+        if let Some(c) = &self.exclusive_maximum {
+            constraints.push(Box::new(c.clone()))
         }
-        if self.minimum.is_some() {
-            constraints.push(Box::new(self.minimum.as_ref().unwrap().clone()))
+        if let Some(c) = &self.minimum {
+            constraints.push(Box::new(c.clone()))
         }
-        if self.exclusive_minimum.is_some() {
-            constraints.push(Box::new(self.exclusive_minimum.as_ref().unwrap().clone()))
+        if let Some(c) = &self.exclusive_minimum {
+            constraints.push(Box::new(c.clone()))
         }
         constraints
     }

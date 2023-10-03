@@ -44,17 +44,17 @@ impl Field for StringField {
         let mut constraints: Vec<Box<dyn Constraint>> = vec![Box::new(Type {
             typed: FieldType::String,
         })];
-        if self.enumeration.is_some() {
-            constraints.push(Box::new(self.enumeration.as_ref().unwrap().clone()))
+        if let Some(c) = &self.enumeration {
+            constraints.push(Box::new(c.clone()))
         }
-        if self.max_length.is_some() {
-            constraints.push(Box::new(self.max_length.as_ref().unwrap().clone()))
+        if let Some(c) = &self.max_length {
+            constraints.push(Box::new(c.clone()))
         }
-        if self.min_length.is_some() {
-            constraints.push(Box::new(self.min_length.as_ref().unwrap().clone()))
+        if let Some(c) = &self.min_length {
+            constraints.push(Box::new(c.clone()))
         }
-        if self.pattern.is_some() {
-            constraints.push(Box::new(self.pattern.as_ref().unwrap().clone()))
+        if let Some(c) = &self.pattern {
+            constraints.push(Box::new(c.clone()))
         }
         constraints
     }

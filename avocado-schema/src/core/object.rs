@@ -37,8 +37,8 @@ impl Field for ObjectField {
         let mut constraints: Vec<Box<dyn Constraint>> = vec![Box::new(Type {
             typed: FieldType::Object,
         })];
-        if self.required.is_some() {
-            constraints.push(Box::new(self.required.as_ref().unwrap().clone()))
+        if let Some(c) = &self.required {
+            constraints.push(Box::new(c.clone()))
         }
         constraints
     }
