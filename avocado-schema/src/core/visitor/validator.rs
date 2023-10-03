@@ -195,6 +195,16 @@ mod tests {
             last_name: "Li".to_string(),
             age: 201,
         };
-        assert!(validator.validate(&invalid_client).is_err());
+        let result = validator.validate(&invalid_client);
+        assert!(result.is_err());
+        assert!(result
+            .err()
+            .unwrap()
+            .get("age")
+            .unwrap()
+            .get(0)
+            .unwrap()
+            .message
+            .contains("value 201 is larger then 200 (Maximum)"));
     }
 }
