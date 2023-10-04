@@ -183,19 +183,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "avocado-schema"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "regex",
- "serde",
- "serde_json",
- "thiserror",
- "unicode-segmentation",
- "uuid",
-]
-
-[[package]]
 name = "avocado-user"
 version = "0.1.0"
 dependencies = [
@@ -3081,7 +3068,6 @@ dependencies = [
  "atomic",
  "getrandom",
  "md-5",
- "rand",
  "serde",
  "sha1_smol",
  "uuid-macro-internal",
