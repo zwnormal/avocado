@@ -3,25 +3,23 @@ use crate::session::cmd::refresh_token::RefreshToken;
 use crate::session::SessionId;
 use crate::state::State as AppState;
 use axum::extract::State;
-use axum::http::{Request, StatusCode};
+use axum::http::header::AUTHORIZATION;
+use axum::http::{HeaderMap, HeaderValue, Request, StatusCode};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use axum_extra::extract::cookie::{Cookie, CookieJar};
 use serde_json::json;
 use std::str::FromStr;
 use uuid::Uuid;
 
 pub(crate) async fn auth<B>(
     State(state): State<AppState>,
-    cookie: CookieJar,
     mut req: Request<B>,
     next: Next<B>,
 ) -> Result<Response, AppError> {
     let path = req.uri().path();
     if path != "/api/user/login" {
-        tracing::info!("receiving cookie {:?}", cookie);
-        match get_session_id(&cookie) {
+        match get_session_id(req.headers()) {
             Some(session_id) => match state.session_store.get(&session_id).await {
                 Ok(Some(session))
                     if RefreshToken {
@@ -34,25 +32,37 @@ pub(crate) async fn auth<B>(
                     req.extensions_mut().insert(session);
                     Ok(next.run(req).await)
                 }
-                _ => clear_session(state.clone(), Some(&session_id), cookie).await,
+                _ => clear_session(state.clone(), Some(&session_id)).await,
             },
-            None => clear_session(state.clone(), None, cookie).await,
+            None => clear_session(state.clone(), None).await,
         }
     } else {
         Ok(next.run(req).await)
     }
 }
 
-fn get_session_id(cookie: &CookieJar) -> Option<Uuid> {
-    cookie
-        .get("session_id")
-        .and_then(|c| Uuid::from_str(c.value()).ok())
+fn get_session_id(headers: &HeaderMap<HeaderValue>) -> Option<Uuid> {
+    let authorization_header = match headers.get(AUTHORIZATION) {
+        Some(v) => v,
+        None => return None,
+    };
+
+    let authorization = match authorization_header.to_str() {
+        Ok(v) => v,
+        Err(_) => return None,
+    };
+
+    if !authorization.starts_with("Bearer ") {
+        return None;
+    }
+
+    let session_id = authorization.trim_start_matches("Bearer ");
+    Uuid::from_str(session_id).ok()
 }
 
 async fn clear_session(
     state: AppState,
     session_id: Option<&SessionId>,
-    cookie: CookieJar,
 ) -> Result<Response, AppError> {
     // Delete the session id from database
     if let Some(session_id) = session_id {
@@ -61,12 +71,9 @@ async fn clear_session(
             Err(e) => tracing::warn!("failed to delete session id: {:?}", e),
         }
     }
-    // Clear the session id from cookie
-    let cookie = cookie.remove(Cookie::named("session_id"));
     // Return the unauthorized message
     Ok((
         StatusCode::UNAUTHORIZED,
-        cookie,
         Json(json!({"error": "user is unauthenticated"})),
     )
         .into_response())

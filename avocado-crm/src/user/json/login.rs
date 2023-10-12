@@ -5,8 +5,7 @@ use crate::user::cmd::login::Login;
 use axum::extract::State;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
-use axum_extra::extract::cookie::Cookie;
-use axum_extra::extract::{CookieJar, WithRejection};
+use axum_extra::extract::WithRejection;
 use serde::Serialize;
 use uuid::Uuid;
 
@@ -17,11 +16,9 @@ pub(crate) struct LoginReply {
 
 #[tracing::instrument(name = "Calling 'user login' api", skip(state))]
 pub(crate) async fn login(
-    cookie: CookieJar,
     State(state): State<AppState>,
     WithRejection(Json(login), _): WithRejection<Json<Login>, AppError>,
 ) -> Result<Response, AppError> {
     let session_id = login.execute(state.clone()).await?;
-    let cookie = cookie.add(Cookie::new("session_id", session_id.to_string()));
-    Ok((cookie, Json(LoginReply { session_id })).into_response())
+    Ok(Json(LoginReply { session_id }).into_response())
 }
