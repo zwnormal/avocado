@@ -1,6 +1,5 @@
 use crate::app::{start_crm_server, start_user_server, TRACING};
 use once_cell::sync::Lazy;
-use reqwest::header::AUTHORIZATION;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 
@@ -25,7 +24,7 @@ async fn user_api_works() {
         session_id: String,
     }
 
-    let client = Client::builder().build().unwrap();
+    let client = Client::builder().cookie_store(true).build().unwrap();
     let reply = client
         .post("http://[::1]:3000/api/user/login")
         .json(&LoginRequest {
@@ -48,11 +47,7 @@ async fn user_api_works() {
         pub role: String,
     }
 
-    let reply = client
-        .get("http://[::1]:3000/api/user/list")
-        .header(AUTHORIZATION, format!("Bearer {}", login_reply.session_id))
-        .send()
-        .await;
+    let reply = client.get("http://[::1]:3000/api/user/list").send().await;
     let list_reply = reply.unwrap().json::<Vec<UserReply>>().await.unwrap();
     tracing::info!("user list reply: {:?}", list_reply);
     assert_eq!(list_reply.get(0).unwrap().email, "admin@avocado.com");
