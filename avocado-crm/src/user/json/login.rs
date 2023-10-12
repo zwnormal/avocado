@@ -22,6 +22,7 @@ pub(crate) async fn login(
     WithRejection(Json(login), _): WithRejection<Json<Login>, AppError>,
 ) -> Result<Response, AppError> {
     let session_id = login.execute(state.clone()).await?;
-    let cookie = cookie.add(Cookie::new("session_id", session_id.to_string()));
+    let cookie = cookie
+        .add(Cookie::parse(format!("session_id={}; Path=/", session_id.to_string())).unwrap());
     Ok((cookie, Json(LoginReply { session_id })).into_response())
 }
