@@ -1,7 +1,8 @@
 use crate::db::sqlite::session::Store as SessionStore;
 use crate::middleware::auth::auth;
 use crate::state::State;
-use axum::http::{Method, StatusCode};
+use axum::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, COOKIE};
+use axum::http::{HeaderValue, Method, StatusCode};
 use axum::middleware::from_fn_with_state;
 use axum::response::IntoResponse;
 use axum::routing::{get, post, IntoMakeService};
@@ -10,7 +11,7 @@ use hyper::server::conn::AddrIncoming;
 use hyper::Server;
 use std::net::SocketAddr;
 use tower::ServiceBuilder;
-use tower_http::cors::{Any, CorsLayer};
+use tower_http::cors::CorsLayer;
 
 mod cfg;
 mod cmd;
@@ -25,8 +26,9 @@ pub async fn run(address: SocketAddr) -> Server<AddrIncoming, IntoMakeService<Ro
     let state = State::new(SessionStore::new().await);
     let cors = CorsLayer::new()
         .allow_methods([Method::GET, Method::POST, Method::DELETE])
-        .allow_headers(Any)
-        .allow_origin(Any);
+        .allow_headers([AUTHORIZATION, ACCEPT, CONTENT_TYPE, COOKIE])
+        .allow_credentials(true)
+        .allow_origin("http://127.0.0.1:5173".parse::<HeaderValue>().unwrap());
 
     let layer = ServiceBuilder::new()
         .layer(cors)

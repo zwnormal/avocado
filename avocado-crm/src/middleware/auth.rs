@@ -20,6 +20,7 @@ pub(crate) async fn auth<B>(
 ) -> Result<Response, AppError> {
     let path = req.uri().path();
     if path != "/api/user/login" {
+        tracing::info!("receiving cookie {:?}", cookie);
         match get_session_id(&cookie) {
             Some(session_id) => match state.session_store.get(&session_id).await {
                 Ok(Some(session))
