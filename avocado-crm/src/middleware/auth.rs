@@ -1,4 +1,4 @@
-use crate::err::AppError;
+use crate::err::JsonError;
 use crate::session::cmd::refresh_token::RefreshToken;
 use crate::session::SessionId;
 use crate::state::State as AppState;
@@ -17,7 +17,7 @@ pub(crate) async fn auth<B>(
     cookie: CookieJar,
     mut req: Request<B>,
     next: Next<B>,
-) -> Result<Response, AppError> {
+) -> Result<Response, JsonError> {
     let path = req.uri().path();
     if path != "/api/user/login" {
         tracing::info!("receiving cookie {:?}", cookie);
@@ -53,7 +53,7 @@ async fn clear_session(
     state: AppState,
     session_id: Option<&SessionId>,
     cookie: CookieJar,
-) -> Result<Response, AppError> {
+) -> Result<Response, JsonError> {
     // Delete the session id from database
     if let Some(session_id) = session_id {
         match state.session_store.delete(session_id).await {

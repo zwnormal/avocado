@@ -1,5 +1,5 @@
 use crate::cmd::Command;
-use crate::err::AppError;
+use crate::err::JsonError;
 use crate::session::Session;
 use crate::state::State as AppState;
 use crate::user::cmd::list::List;
@@ -11,7 +11,7 @@ use axum::{Extension, Json};
 pub(crate) async fn list(
     Extension(session): Extension<Session>,
     State(state): State<AppState>,
-) -> Result<Json<Vec<UserReply>>, AppError> {
+) -> Result<Json<Vec<UserReply>>, JsonError> {
     let list_reply = List { session }.execute(state.clone()).await?;
     Ok(Json(list_reply))
 }

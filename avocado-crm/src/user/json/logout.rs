@@ -1,5 +1,5 @@
 use crate::cmd::Command;
-use crate::err::AppError;
+use crate::err::JsonError;
 use crate::session::Session;
 use crate::state::State as AppState;
 use crate::user::cmd::logout::Logout;
@@ -15,7 +15,7 @@ pub(crate) async fn logout(
     cookie: CookieJar,
     Extension(session): Extension<Session>,
     State(state): State<AppState>,
-) -> Result<Response, AppError> {
+) -> Result<Response, JsonError> {
     let cookie = cookie.remove(Cookie::named("session_id"));
     Logout { session }.execute(state.clone()).await?;
     Ok((cookie, StatusCode::OK.into_response()).into_response())

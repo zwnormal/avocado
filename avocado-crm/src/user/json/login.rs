@@ -1,5 +1,5 @@
 use crate::cmd::Command;
-use crate::err::AppError;
+use crate::err::JsonError;
 use crate::state::State as AppState;
 use crate::user::cmd::login::Login;
 use axum::extract::State;
@@ -19,8 +19,8 @@ pub(crate) struct LoginReply {
 pub(crate) async fn login(
     cookie: CookieJar,
     State(state): State<AppState>,
-    WithRejection(Json(login), _): WithRejection<Json<Login>, AppError>,
-) -> Result<Response, AppError> {
+    WithRejection(Json(login), _): WithRejection<Json<Login>, JsonError>,
+) -> Result<Response, JsonError> {
     let session_id = login.execute(state.clone()).await?;
     let cookie = cookie
         .add(Cookie::parse(format!("session_id={}; Path=/", session_id.to_string())).unwrap());

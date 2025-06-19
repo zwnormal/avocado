@@ -6,9 +6,9 @@ use serde_json::{json, Value};
 use std::collections::HashMap;
 use tonic::{Code, Status};
 
-pub(crate) struct AppError(anyhow::Error);
+pub(crate) struct JsonError(anyhow::Error);
 
-impl IntoResponse for AppError {
+impl IntoResponse for JsonError {
     fn into_response(self) -> Response {
         tracing::error!("App Error: {:?}", self.0);
         if let Some(s) = self.0.downcast_ref::<Status>() {
@@ -60,7 +60,7 @@ fn json_rejection_to_response(error: &JsonRejection) -> Response {
     .into_response()
 }
 
-impl<E> From<E> for AppError
+impl<E> From<E> for JsonError
 where
     E: Into<anyhow::Error>,
 {
